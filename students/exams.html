@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Side App - Exam Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --secondary: #10B981;
+            --accent: #EC4899;
+            --warning: #F59E0B;
+            --info: #06B6D4;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 py-6 w-full overflow-hidden">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-2xl">
+                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Student Side App</h1>
+                    <p class="text-gray-600 text-sm">Exam Planner</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4 w-full sm:w-auto">
+                <div class="text-right hidden sm:block">
+                    <p class="font-medium text-gray-800">Alex Johnson</p>
+                    <p class="text-sm text-gray-600">1 exam upcoming</p>
+                </div>
+                <div class="relative">
+                    <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                        AJ
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                        <i class="fas fa-check text-xs text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Side Navigation -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-5">
+                    <div class="mb-6 sm:mb-8">
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Exam Readiness</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Overall</span>
+                                    <span class="font-bold text-orange-600">68%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 68%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Study Hours</span>
+                                    <span class="font-bold text-blue-600">12/20</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Practice Tests</span>
+                                    <span class="font-bold text-green-600">3/5</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation -->
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Menu</h3>
+                        <div class="space-y-2">
+                            <a href="students.html" class="nav-btn w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-home mr-3 text-lg"></i>
+                                    <span class="font-medium">Dashboard</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="ai-tutor.html" class="nav-btn w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-robot mr-3 text-lg text-cyan-500"></i>
+                                    <span class="font-medium">AI Tutor</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="wellness.html" class="nav-btn w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-heart mr-3 text-lg text-pink-500"></i>
+                                    <span class="font-medium">Wellness</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="catchup.html" class="nav-btn w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-book-medical mr-3 text-lg text-teal-500"></i>
+                                    <span class="font-medium">Catch-up</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="exams.html" class="nav-btn w-full text-left p-3 rounded-xl bg-orange-50 text-orange-700 font-medium flex items-center justify-between border-2 border-orange-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-alt mr-3 text-lg text-orange-500"></i>
+                                    <span class="font-medium">Exams</span>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Exams -->
+                    <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-100">
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Upcoming Exams</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center p-3 bg-orange-50 rounded-lg">
+                                <div class="bg-orange-500 text-white p-2 rounded-lg mr-3">
+                                    <i class="fas fa-exam"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-sm">Math Midterm</p>
+                                    <p class="text-xs text-gray-600">Oct 30 • 14 days</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+                                <div class="bg-blue-500 text-white p-2 rounded-lg mr-3">
+                                    <i class="fas fa-flask"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-sm">Science Quiz</p>
+                                    <p class="text-xs text-gray-600">Nov 5 • 20 days</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6 overflow-hidden">
+                    <div class="mb-6 sm:mb-8">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-gray-800 flex items-center">
+                                    <i class="fas fa-calendar-alt text-orange-500 mr-3"></i> Exam Planner
+                                </h2>
+                                <p class="text-gray-600 text-sm sm:text-base">Plan and prepare for success</p>
+                            </div>
+                            <div class="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full w-full sm:w-auto text-center">
+                                <i class="fas fa-exclamation-triangle mr-1"></i> 1 exam in 14 days
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Next Exam -->
+                        <div class="bg-gradient-to-br from-orange-50 to-yellow-50 p-4 sm:p-5 rounded-xl border border-orange-200">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-3 rounded-full mr-3">
+                                    <i class="fas fa-exam"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">Next Exam 🚨</h3>
+                                    <p class="text-sm text-gray-600">Math Midterm - Oct 30</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Countdown -->
+                            <div class="mb-6">
+                                <div class="grid grid-cols-4 gap-2 sm:gap-3 mb-4">
+                                    <div class="text-center">
+                                        <div id="countdown-days" class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-2 sm:p-3 rounded-xl font-bold text-xl sm:text-2xl">
+                                            14
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Days</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div id="countdown-hours" class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-2 sm:p-3 rounded-xl font-bold text-xl sm:text-2xl">
+                                            06
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Hours</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div id="countdown-minutes" class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-2 sm:p-3 rounded-xl font-bold text-xl sm:text-2xl">
+                                            32
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Mins</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div id="countdown-seconds" class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-2 sm:p-3 rounded-xl font-bold text-xl sm:text-2xl">
+                                            15
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Secs</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white p-3 rounded-lg border border-orange-200">
+                                    <p class="text-xs sm:text-sm text-gray-600 mb-1"><i class="fas fa-calendar-alt mr-2"></i> Oct 30, 2023 • 9:00 AM</p>
+                                    <p class="text-xs sm:text-sm text-gray-600"><i class="fas fa-map-marker-alt mr-2"></i> Room 205</p>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white py-3 rounded-lg font-medium">
+                                <i class="fas fa-calendar-plus mr-2"></i> Add to Calendar
+                            </button>
+                        </div>
+                        
+                        <!-- Preparation -->
+                        <div>
+                            <!-- Schedule -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 mb-6">
+                                <h3 class="font-bold text-gray-800 mb-4">Study Schedule</h3>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                        <div>
+                                            <p class="font-medium text-sm">Today</p>
+                                            <p class="text-xs text-gray-600">Quadratic practice</p>
+                                        </div>
+                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">3:00 PM</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                        <div>
+                                            <p class="font-medium text-sm">Tomorrow</p>
+                                            <p class="text-xs text-gray-600">Review polynomials</p>
+                                        </div>
+                                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">4:30 PM</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                                        <div>
+                                            <p class="font-medium text-sm">Friday</p>
+                                            <p class="text-xs text-gray-600">Practice test</p>
+                                        </div>
+                                        <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">2:00 PM</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Readiness -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
+                                <h3 class="font-bold text-gray-800 mb-4">Your Readiness</h3>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-xs sm:text-sm">Quadratic Functions</span>
+                                            <span class="font-bold text-red-600 text-sm">42%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 rounded-full h-2">
+                                            <div class="bg-red-500 h-2 rounded-full" style="width: 42%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-xs sm:text-sm">Polynomials</span>
+                                            <span class="font-bold text-yellow-600 text-sm">68%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 rounded-full h-2">
+                                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 68%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-xs sm:text-sm">Linear Equations</span>
+                                            <span class="font-bold text-green-600 text-sm">95%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <a href="ai-tutor.html" class="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-lg font-medium block text-center">
+                                    <i class="fas fa-brain mr-2"></i> Get Study Tips
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateCountdown() {
+            const examDate = new Date('2023-10-30T09:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = examDate - now;
+            
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById('countdown-days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('countdown-hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('countdown-minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('countdown-seconds').textContent = seconds.toString().padStart(2, '0');
+            }
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>

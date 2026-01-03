@@ -1,0 +1,3253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduManage Pro - Smart Classroom Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'edu-blue': '#3B82F6',
+                        'edu-green': '#10B981',
+                        'edu-purple': '#8B5CF6',
+                        'edu-orange': '#F59E0B',
+                        'edu-pink': '#EC4899',
+                        'edu-indigo': '#6366F1',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .chat-container {
+            height: 500px;
+            overflow-y: auto;
+        }
+        .chat-message {
+            max-width: 80%;
+            margin-bottom: 16px;
+        }
+        .chat-message.sent {
+            margin-left: auto;
+        }
+        .chat-message.received {
+            margin-right: auto;
+        }
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+        }
+        .sent .message-bubble {
+            background-color: #3B82F6;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .received .message-bubble {
+            background-color: #F3F4F6;
+            color: #1F2937;
+            border-bottom-left-radius: 4px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom scrollbar */
+        .chat-container::-webkit-scrollbar,
+        .scrollable-table::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .chat-container::-webkit-scrollbar-track,
+        .scrollable-table::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        .chat-container::-webkit-scrollbar-thumb,
+        .scrollable-table::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        .chat-container::-webkit-scrollbar-thumb:hover,
+        .scrollable-table::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+        /* Table styles */
+        .table-row-hover:hover {
+            background-color: #f9fafb;
+        }
+        /* Progress bar animation */
+        .progress-bar {
+            transition: width 0.6s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2 cursor-pointer" id="logo">
+                <i class="fas fa-chalkboard-teacher text-2xl"></i>
+                <h1 class="text-2xl font-bold">EduManage Pro</h1>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#" class="nav-link hover:text-gray-200 font-medium" data-page="dashboard">Dashboard</a>
+                <a href="#" class="nav-link hover:text-gray-200 font-medium" data-page="attendance">Attendance</a>
+                <a href="#" class="nav-link hover:text-gray-200 font-medium" data-page="lesson-plan">Lesson Plans</a>
+                <a href="#" class="nav-link hover:text-gray-200 font-medium" data-page="assignments">Assignments</a>
+                <a href="#" class="nav-link hover:text-gray-200 font-medium" data-page="substitute">Substitute</a>
+                <a href="#" class="nav-link hover:text-gray-200 font-medium" data-page="chat">Class Chat</a>
+                <a href="#" class="nav-link hover:text-gray-200 font-medium" data-page="students">Students</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="hidden md:flex items-center space-x-2 bg-white/20 p-2 rounded-lg">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="font-medium">Ms. Rodriguez</span>
+                </div>
+                <div class="relative">
+                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    <button class="text-white" id="notificationsBtn">
+                        <i class="fas fa-bell text-xl"></i>
+                    </button>
+                </div>
+                <button class="md:hidden text-white" id="menuToggle">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div class="md:hidden bg-blue-800 hidden" id="mobileMenu">
+            <div class="px-4 py-3 space-y-3">
+                <a href="#" class="nav-link block hover:text-gray-200 font-medium" data-page="dashboard">Dashboard</a>
+                <a href="#" class="nav-link block hover:text-gray-200 font-medium" data-page="attendance">Attendance</a>
+                <a href="#" class="nav-link block hover:text-gray-200 font-medium" data-page="lesson-plan">Lesson Plans</a>
+                <a href="#" class="nav-link block hover:text-gray-200 font-medium" data-page="assignments">Assignments</a>
+                <a href="#" class="nav-link block hover:text-gray-200 font-medium" data-page="substitute">Substitute</a>
+                <a href="#" class="nav-link block hover:text-gray-200 font-medium" data-page="chat">Class Chat</a>
+                <a href="#" class="nav-link block hover:text-gray-200 font-medium" data-page="students">Students</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="container mx-auto px-4 py-8" id="main-content">
+        <!-- Dashboard Page -->
+        <div class="page fade-in active" id="dashboard-page">
+            <!-- Dashboard Header -->
+            <div class="mb-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">Teacher Dashboard</h2>
+                        <p class="text-gray-600 mt-2">Welcome back! Here's your classroom overview for today, Oct 15, 2023</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex space-x-3">
+                        <button class="bg-edu-green text-white px-4 py-2 rounded-lg font-medium flex items-center" id="generateQR">
+                            <i class="fas fa-qrcode mr-2"></i> Generate Class QR
+                        </button>
+                        <button class="bg-white text-edu-blue border border-edu-blue px-4 py-2 rounded-lg font-medium">
+                            <i class="fas fa-cog mr-2"></i> Settings
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="bg-white p-6 rounded-xl shadow-md card-hover cursor-pointer" data-page="attendance">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">Today's Attendance</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">22/25</p>
+                                <p class="text-edu-green text-sm mt-1"><i class="fas fa-arrow-up mr-1"></i> 88% present</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-user-check text-edu-blue text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-md card-hover cursor-pointer" data-page="assignments">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">Pending Grading</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">18</p>
+                                <p class="text-edu-orange text-sm mt-1">Assignments to grade</p>
+                            </div>
+                            <div class="bg-orange-100 p-3 rounded-full">
+                                <i class="fas fa-clipboard-check text-edu-orange text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-md card-hover cursor-pointer" data-page="lesson-plan">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">Today's Lessons</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">3</p>
+                                <p class="text-gray-600 text-sm mt-1">Plans ready</p>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-full">
+                                <i class="fas fa-book-open text-edu-purple text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-md card-hover cursor-pointer" data-page="students">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">Student Performance</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">84%</p>
+                                <p class="text-edu-indigo text-sm mt-1">Class average</p>
+                            </div>
+                            <div class="bg-indigo-100 p-3 rounded-full">
+                                <i class="fas fa-chart-line text-edu-indigo text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Overview -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Smart Classroom Features</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Smart Attendance Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover cursor-pointer" data-page="attendance">
+                        <div class="gradient-bg text-white p-5">
+                            <h4 class="text-xl font-bold flex items-center">
+                                <i class="fas fa-clipboard-list mr-3"></i> Smart Attendance
+                            </h4>
+                            <p class="opacity-90 text-sm mt-1">Beyond Present/Absent tracking</p>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-gray-700">One-tap attendance with QR codes, late arrival tracking, auto-generated patterns, and monthly reports.</p>
+                            <div class="mt-4 text-sm text-gray-600">
+                                <i class="fas fa-clock mr-1"></i> Saves 10-15 min per class
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Lesson Planning Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover cursor-pointer" data-page="lesson-plan">
+                        <div class="bg-edu-purple text-white p-5">
+                            <h4 class="text-xl font-bold flex items-center">
+                                <i class="fas fa-robot mr-3"></i> AI Lesson Planning
+                            </h4>
+                            <p class="opacity-90 text-sm mt-1">Input syllabus → AI generates lesson plan</p>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-gray-700">Daily/weekly plan suggestions, auto-adjust for holidays, teaching progress tracker.</p>
+                            <div class="mt-4 text-sm text-gray-600">
+                                <i class="fas fa-trophy mr-1"></i> Huge win for teachers
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Assignment Automation Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover cursor-pointer" data-page="assignments">
+                        <div class="bg-edu-green text-white p-5">
+                            <h4 class="text-xl font-bold flex items-center">
+                                <i class="fas fa-tasks mr-3"></i> Assignment Automation
+                            </h4>
+                            <p class="opacity-90 text-sm mt-1">Homework tracking made easy</p>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-gray-700">Auto-notify students & parents, deadline reminders, submission tracking, AI-assisted grading.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Substitute Teacher Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover cursor-pointer" data-page="substitute">
+                        <div class="bg-edu-orange text-white p-5">
+                            <h4 class="text-xl font-bold flex items-center">
+                                <i class="fas fa-user-friends mr-3"></i> Substitute Teacher
+                            </h4>
+                            <p class="opacity-90 text-sm mt-1">One-click "Substitute Mode"</p>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-gray-700">Substitute gets lesson plan + materials instantly. Attendance + notes synced automatically.</p>
+                            <div class="mt-4 text-sm text-gray-600">
+                                <i class="fas fa-bolt mr-1"></i> Eliminates chaos
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Class Chat Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover cursor-pointer" data-page="chat">
+                        <div class="bg-edu-pink text-white p-5">
+                            <h4 class="text-xl font-bold flex items-center">
+                                <i class="fas fa-comments mr-3"></i> Class Chat
+                            </h4>
+                            <p class="opacity-90 text-sm mt-1">Real-time communication</p>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-gray-700">Class-wide and group conversations, file sharing, announcements, quick questions & homework help.</p>
+                            <div class="mt-4 text-sm text-gray-600">
+                                <i class="fas fa-users mr-1"></i> Fosters community
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Student Management Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover cursor-pointer" data-page="students">
+                        <div class="bg-edu-indigo text-white p-5">
+                            <h4 class="text-xl font-bold flex items-center">
+                                <i class="fas fa-user-graduate mr-3"></i> Student Management
+                            </h4>
+                            <p class="opacity-90 text-sm mt-1">Comprehensive profiles & analytics</p>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-gray-700">Track performance, behavior, attendance patterns, parent contacts, and learning needs.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Page -->
+        <div class="page fade-in" id="attendance-page">
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-clipboard-list text-edu-blue mr-3"></i> Smart Attendance System
+                        </h2>
+                        <p class="text-gray-600 mt-2">Track attendance beyond just present/absent with one-tap efficiency. Saves 10-15 min per class daily.</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="bg-edu-blue text-white px-4 py-2 rounded-lg font-medium flex items-center" id="markAttendanceAll">
+                            <i class="fas fa-bolt mr-2"></i> One-Tap Mark All
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Quick Actions -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                        <div class="gradient-bg text-white p-5">
+                            <h4 class="text-xl font-bold">Quick Actions</h4>
+                            <p class="opacity-90">Fast attendance tools</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="space-y-3">
+                                <button class="w-full bg-edu-green text-white py-3 rounded-lg font-medium flex items-center justify-center">
+                                    <i class="fas fa-qrcode mr-2"></i> Generate QR Code
+                                </button>
+                                <button class="w-full bg-white text-edu-blue border border-edu-blue py-3 rounded-lg font-medium flex items-center justify-center">
+                                    <i class="fas fa-share mr-2"></i> Share Class Code
+                                </button>
+                                <button class="w-full bg-white text-gray-700 border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center">
+                                    <i class="fas fa-file-export mr-2"></i> Export Report
+                                </button>
+                            </div>
+                            
+                            <div class="mt-6 pt-6 border-t">
+                                <h5 class="font-medium text-gray-700 mb-3">Class Information</h5>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Class:</span>
+                                        <span class="font-medium">Grade 10 Mathematics</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Period:</span>
+                                        <span class="font-medium">2 (10:00 AM - 11:00 AM)</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Students:</span>
+                                        <span class="font-medium">25 enrolled</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Today's Code:</span>
+                                        <span class="font-bold text-edu-blue">MATH10A2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Attendance Patterns -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <h4 class="font-bold text-gray-800">Attendance Patterns</h4>
+                            <p class="text-sm text-gray-500">This month (October 2023)</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Perfect Attendance</span>
+                                        <span class="font-medium">18 students</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-edu-green h-2 rounded-full" style="width: 72%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Frequent Late Arrivals</span>
+                                        <span class="font-medium">3 students</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-edu-orange h-2 rounded-full" style="width: 12%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Early Leave Patterns</span>
+                                        <span class="font-medium">2 students</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-red-500 h-2 rounded-full" style="width: 8%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Absent Today</span>
+                                        <span class="font-medium">3 students</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-gray-400 h-2 rounded-full" style="width: 12%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Attendance Table -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-xl">Today's Attendance</h4>
+                                    <p class="text-sm text-gray-500">Tap to mark present/absent/late. Status auto-saves.</p>
+                                </div>
+                                <div class="mt-2 md:mt-0 flex space-x-2">
+                                    <div class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full flex items-center">
+                                        <i class="fas fa-check-circle mr-1"></i> <span id="presentCount">22</span> Present
+                                    </div>
+                                    <div class="bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full flex items-center">
+                                        <i class="fas fa-times-circle mr-1"></i> <span id="absentCount">3</span> Absent
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="overflow-x-auto scrollable-table">
+                                <table class="w-full">
+                                    <thead>
+                                        <tr class="border-b">
+                                            <th class="text-left py-3 px-4 text-gray-700 font-medium">Student</th>
+                                            <th class="text-left py-3 px-4 text-gray-700 font-medium">Status</th>
+                                            <th class="text-left py-3 px-4 text-gray-700 font-medium">Time</th>
+                                            <th class="text-left py-3 px-4 text-gray-700 font-medium">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="attendanceTable">
+                                        <!-- Attendance rows will be populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-6 pt-6 border-t">
+                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                                    <div>
+                                        <h5 class="font-medium text-gray-700 mb-2">Monthly Report Automation</h5>
+                                        <p class="text-sm text-gray-600">Reports auto-generated and sent to parents on the 1st of each month</p>
+                                    </div>
+                                    <button class="mt-3 md:mt-0 bg-edu-blue text-white px-4 py-2 rounded-lg font-medium flex items-center" id="sendReport">
+                                        <i class="fas fa-paper-plane mr-2"></i> Send Report Now
+                                    </button>
+                                </div>
+                                
+                                <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="border border-gray-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                                                <i class="fas fa-chart-bar text-edu-blue"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Attendance Analytics</p>
+                                                <p class="text-sm text-gray-600">Patterns & trends</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="border border-gray-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <div class="bg-green-100 p-2 rounded-lg mr-3">
+                                                <i class="fas fa-file-pdf text-edu-green"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">PDF Reports</p>
+                                                <p class="text-sm text-gray-600">Professional format</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="border border-gray-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <div class="bg-purple-100 p-2 rounded-lg mr-3">
+                                                <i class="fas fa-envelope text-edu-purple"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Parent Notifications</p>
+                                                <p class="text-sm text-gray-600">Email & SMS alerts</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson Planning Page -->
+        <div class="page fade-in" id="lesson-plan-page">
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-robot text-edu-purple mr-3"></i> AI Lesson Planning Assistant
+                        </h2>
+                        <p class="text-gray-600 mt-2">Input syllabus → AI generates complete lesson plans with progress tracking</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="bg-edu-purple text-white px-4 py-2 rounded-lg font-medium flex items-center" id="generateLessonPlan">
+                            <i class="fas fa-magic mr-2"></i> Generate Plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- AI Generator -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                        <div class="bg-edu-purple text-white p-5">
+                            <h4 class="text-xl font-bold">AI Lesson Generator</h4>
+                            <p class="opacity-90">Create plans from syllabus</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-medium mb-2">Select Class</label>
+                                <select class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-edu-purple">
+                                    <option>Grade 10 Mathematics</option>
+                                    <option>Grade 11 Calculus</option>
+                                    <option>Grade 9 Algebra</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-medium mb-2">Topic/Chapter</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-edu-purple" value="Quadratic Functions & Graphs">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-gray-700 font-medium mb-2">Duration</label>
+                                <select class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-edu-purple">
+                                    <option>60 minutes (1 period)</option>
+                                    <option>90 minutes (block period)</option>
+                                    <option>120 minutes (double period)</option>
+                                </select>
+                            </div>
+                            
+                            <button class="w-full bg-edu-purple text-white py-3 rounded-lg font-medium flex items-center justify-center">
+                                <i class="fas fa-robot mr-2"></i> Generate with AI
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Tracker -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <h4 class="font-bold text-gray-800">Syllabus Progress</h4>
+                            <p class="text-sm text-gray-500">Algebra II - Current Term</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="mb-4">
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-gray-700">Overall Progress</span>
+                                    <span class="font-medium">65%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-edu-purple h-3 rounded-full progress-bar" style="width: 65%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-700">Chapter 5: Quadratic Functions</span>
+                                        <span class="font-medium">85%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-700">Chapter 6: Polynomials</span>
+                                        <span class="font-medium">60%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-700">Chapter 7: Rational Expressions</span>
+                                        <span class="font-medium">30%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 30%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Generated Lesson Plan -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <h4 class="text-xl font-bold text-gray-800">Today's AI-Generated Lesson Plan</h4>
+                            <p class="text-gray-600">Grade 10 Mathematics | Quadratic Functions | 60 minutes</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="font-bold text-gray-800 mb-3 flex items-center">
+                                        <i class="fas fa-bullseye text-edu-purple mr-2"></i> Learning Objectives
+                                    </h5>
+                                    <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                                        <li>Graph quadratic functions from standard form</li>
+                                        <li>Identify vertex, axis of symmetry, and intercepts</li>
+                                        <li>Apply transformations to parent function y=x²</li>
+                                        <li>Solve real-world problems using quadratic models</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold text-gray-800 mb-3 flex items-center">
+                                        <i class="fas fa-tools text-edu-orange mr-2"></i> Materials Needed
+                                    </h5>
+                                    <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                                        <li>Graph paper or whiteboards</li>
+                                        <li>Graphing calculators</li>
+                                        <li>Quadratic functions worksheet</li>
+                                        <li>Projector for demonstrations</li>
+                                        <li>Exit ticket slips</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <h5 class="font-bold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-list-ol text-edu-blue mr-2"></i> Lesson Structure
+                                </h5>
+                                <div class="space-y-4">
+                                    <div class="flex items-start p-3 bg-blue-50 rounded-lg">
+                                        <div class="bg-edu-blue text-white font-medium py-1 px-3 rounded mr-3">5 min</div>
+                                        <div>
+                                            <p class="font-medium">Do Now: Review linear graphing</p>
+                                            <p class="text-sm text-gray-600">Students graph y=2x+3 as warm-up</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start p-3 bg-purple-50 rounded-lg">
+                                        <div class="bg-edu-purple text-white font-medium py-1 px-3 rounded mr-3">15 min</div>
+                                        <div>
+                                            <p class="font-medium">Direct Instruction: Quadratic basics</p>
+                                            <p class="text-sm text-gray-600">Introduce standard form, demonstrate graphing</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start p-3 bg-green-50 rounded-lg">
+                                        <div class="bg-edu-green text-white font-medium py-1 px-3 rounded mr-3">20 min</div>
+                                        <div>
+                                            <p class="font-medium">Guided Practice</p>
+                                            <p class="text-sm text-gray-600">Graph y=x²+2x-3 together, identify key features</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start p-3 bg-yellow-50 rounded-lg">
+                                        <div class="bg-yellow-500 text-white font-medium py-1 px-3 rounded mr-3">15 min</div>
+                                        <div>
+                                            <p class="font-medium">Independent Practice</p>
+                                            <p class="text-sm text-gray-600">Worksheet problems with mixed difficulty</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start p-3 bg-red-50 rounded-lg">
+                                        <div class="bg-red-500 text-white font-medium py-1 px-3 rounded mr-3">5 min</div>
+                                        <div>
+                                            <p class="font-medium">Exit Ticket</p>
+                                            <p class="text-sm text-gray-600">Quick assessment: Graph y=-x²+4</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 pt-6 border-t flex justify-between">
+                                <div class="flex space-x-3">
+                                    <button class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg font-medium flex items-center">
+                                        <i class="fas fa-edit mr-2"></i> Edit Plan
+                                    </button>
+                                    <button class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg font-medium flex items-center">
+                                        <i class="fas fa-print mr-2"></i> Print
+                                    </button>
+                                </div>
+                                <button class="bg-edu-purple text-white px-4 py-2 rounded-lg font-medium flex items-center">
+                                    <i class="fas fa-save mr-2"></i> Save to Calendar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Plans -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden mt-8">
+                        <div class="border-b p-5">
+                            <h4 class="font-bold text-gray-800">Upcoming Lesson Plans</h4>
+                            <p class="text-sm text-gray-500">Auto-adjusted for holidays and school events</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                    <div>
+                                        <p class="font-medium">Tuesday, Oct 17</p>
+                                        <p class="text-sm text-gray-600">Quadratic Equations - Solving by factoring</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded mr-2">Ready</span>
+                                        <button class="text-gray-500 hover:text-gray-700">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                    <div>
+                                        <p class="font-medium">Wednesday, Oct 18</p>
+                                        <p class="text-sm text-gray-600">Quadratic Formula introduction</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded mr-2">Draft</span>
+                                        <button class="text-gray-500 hover:text-gray-700">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-blue-50">
+                                    <div>
+                                        <p class="font-medium">Friday, Oct 20</p>
+                                        <p class="text-sm text-gray-600">Chapter 5 Review & Practice Test</p>
+                                        <p class="text-xs text-blue-600 mt-1"><i class="fas fa-info-circle mr-1"></i> Adjusted for early dismissal</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded mr-2">Auto-adjusted</span>
+                                        <button class="text-gray-500 hover:text-gray-700">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignments Page -->
+        <div class="page fade-in" id="assignments-page">
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-tasks text-edu-green mr-3"></i> Assignment & Homework Automation
+                        </h2>
+                        <p class="text-gray-600 mt-2">Automate homework tracking with notifications, reminders, and AI-assisted grading</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="bg-edu-green text-white px-4 py-2 rounded-lg font-medium flex items-center" id="createAssignment">
+                            <i class="fas fa-plus mr-2"></i> Create Assignment
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Assignment Creation -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                        <div class="bg-edu-green text-white p-5">
+                            <h4 class="text-xl font-bold">Create Assignment</h4>
+                            <p class="opacity-90">Students & parents auto-notified</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-medium mb-2">Assignment Title</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-edu-green" placeholder="e.g., Algebra Homework #6">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-medium mb-2">Due Date</label>
+                                <input type="date" class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-edu-green" value="2023-10-20">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-medium mb-2">Class</label>
+                                <select class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-edu-green">
+                                    <option>Grade 10 Mathematics (25 students)</option>
+                                    <option>Grade 11 Calculus (18 students)</option>
+                                    <option>Grade 9 Algebra (22 students)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-gray-700 font-medium mb-2">Assignment Type</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button class="bg-green-50 text-edu-green border border-green-200 py-2 rounded-lg">Homework</button>
+                                    <button class="bg-white text-gray-700 border border-gray-300 py-2 rounded-lg">Quiz</button>
+                                    <button class="bg-white text-gray-700 border border-gray-300 py-2 rounded-lg">Project</button>
+                                    <button class="bg-white text-gray-700 border border-gray-300 py-2 rounded-lg">Test</button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="mr-2" checked>
+                                    <span class="text-gray-700">Enable AI-assisted grading</span>
+                                </label>
+                                <p class="text-sm text-gray-600 mt-1">Objective questions auto-graded instantly</p>
+                            </div>
+                            
+                            <button class="w-full bg-edu-green text-white py-3 rounded-lg font-medium">
+                                <i class="fas fa-paper-plane mr-2"></i> Publish Assignment
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Grading Status -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <h4 class="font-bold text-gray-800">Grading Status</h4>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="mb-4">
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-gray-700">Algebra Homework #5</span>
+                                    <span class="font-medium">72%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-edu-green h-2 rounded-full" style="width: 72%"></div>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-1">18/25 submissions graded</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-gray-700">Mid-term Project</span>
+                                    <span class="font-medium">48%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 48%"></div>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-1">12/25 submissions graded</p>
+                            </div>
+                            
+                            <button class="w-full mt-4 bg-white text-gray-700 border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center">
+                                <i class="fas fa-robot mr-2"></i> Start AI Grading
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Assignment List -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-xl">Active Assignments</h4>
+                                    <p class="text-sm text-gray-500">Auto-reminders sent 24h before deadline</p>
+                                </div>
+                                <div class="mt-2 md:mt-0 flex space-x-2">
+                                    <button class="text-gray-700 border border-gray-300 px-3 py-1 rounded-lg text-sm">All</button>
+                                    <button class="text-gray-700 border border-gray-300 px-3 py-1 rounded-lg text-sm">Homework</button>
+                                    <button class="text-gray-700 border border-gray-300 px-3 py-1 rounded-lg text-sm">Projects</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="space-y-4">
+                                <!-- Assignment 1 -->
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-green-50 transition-colors">
+                                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                                        <div class="mb-3 md:mb-0">
+                                            <div class="flex items-center mb-1">
+                                                <h5 class="font-bold text-gray-800 text-lg">Algebra Homework #5</h5>
+                                                <span class="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">Homework</span>
+                                            </div>
+                                            <div class="flex items-center text-sm text-gray-600">
+                                                <span class="mr-3"><i class="far fa-clock mr-1"></i> Due: Tomorrow, 3:00 PM</span>
+                                                <span><i class="fas fa-user-graduate mr-1"></i> Grade 10 Math</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">
+                                            18/25 Submitted
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-700 mt-2">Practice problems on quadratic equations and graphing. Includes 10 problems with mixed difficulty.</p>
+                                    
+                                    <div class="mt-4 flex flex-wrap gap-2">
+                                        <button class="text-edu-green hover:bg-green-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center">
+                                            <i class="fas fa-eye mr-2"></i> View Submissions
+                                        </button>
+                                        <button class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center">
+                                            <i class="fas fa-edit mr-2"></i> Edit
+                                        </button>
+                                        <button class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center">
+                                            <i class="fas fa-bell mr-2"></i> Send Reminder
+                                        </button>
+                                        <button class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center">
+                                            <i class="fas fa-robot mr-2"></i> AI Grade
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Assignment 2 -->
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-green-50 transition-colors">
+                                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                                        <div class="mb-3 md:mb-0">
+                                            <div class="flex items-center mb-1">
+                                                <h5 class="font-bold text-gray-800 text-lg">Mid-term Project</h5>
+                                                <span class="ml-2 bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">Project</span>
+                                            </div>
+                                            <div class="flex items-center text-sm text-gray-600">
+                                                <span class="mr-3"><i class="far fa-clock mr-1"></i> Due: Nov 15, 5:00 PM</span>
+                                                <span><i class="fas fa-user-graduate mr-1"></i> Grade 10 Math</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
+                                            12/25 Submitted
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-700 mt-2">Research project on applications of quadratic functions in real world. 5-page report with references.</p>
+                                    
+                                    <div class="mt-4 flex flex-wrap gap-2">
+                                        <button class="text-edu-green hover:bg-green-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center">
+                                            <i class="fas fa-eye mr-2"></i> View Submissions
+                                        </button>
+                                        <button class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center">
+                                            <i class="fas fa-edit mr-2"></i> Edit
+                                        </button>
+                                        <button class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center">
+                                            <i class="fas fa-bell mr-2"></i> Send Reminder
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Assignment 3 -->
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-green-50 transition-colors">
+                                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                                        <div class="mb-3 md:mb-0">
+                                            <div class="flex items-center mb-1">
+                                                <h5 class="font-bold text-gray-800 text-lg">Chapter 5 Quiz</h5>
+                                                <span class="ml-2 bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded">Quiz</span>
+                                            </div>
+                                            <div class="flex items-center text-sm text-gray-600">
+                                                <span class="mr-3"><i class="far fa-clock mr-1"></i> Due: Oct 20, 11:59 PM</span>
+                                                <span><i class="fas fa-user-graduate mr-1"></i> Grade 10 Math</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray-200 text-gray-800 text-sm font-medium px-3 py-1 rounded-full">
+                                            Not Started
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-700 mt-2">Online quiz on Google Forms covering quadratic functions. Auto-graded by AI for objective questions.</p>
+                                    
+                                    <div class="mt-4 flex flex-wrap gap-2">
+                                        <button class="text-edu-green hover:bg-green-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center">
+                                            <i class="fas fa-play mr-2"></i> Activate
+                                        </button>
+                                        <button class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center">
+                                            <i class="fas fa-edit mr-2"></i> Edit
+                                        </button>
+                                        <button class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center">
+                                            <i class="fas fa-copy mr-2"></i> Duplicate
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- AI Grading Section -->
+                            <div class="mt-8 pt-8 border-t">
+                                <h4 class="font-bold text-gray-800 mb-4">AI-Assisted Grading</h4>
+                                <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-5">
+                                    <div class="flex items-center mb-4">
+                                        <i class="fas fa-robot text-3xl text-edu-green mr-4"></i>
+                                        <div>
+                                            <h5 class="font-bold text-gray-800">18 assignments ready for AI grading</h5>
+                                            <p class="text-gray-700">Multiple choice, true/false, and short answer questions can be auto-graded</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                            <h6 class="font-medium text-gray-700 mb-2">AI Grading Benefits</h6>
+                                            <ul class="text-sm text-gray-600 space-y-1">
+                                                <li class="flex items-start">
+                                                    <i class="fas fa-check text-edu-green mt-1 mr-2"></i>
+                                                    <span>Instant feedback for students</span>
+                                                </li>
+                                                <li class="flex items-start">
+                                                    <i class="fas fa-check text-edu-green mt-1 mr-2"></i>
+                                                    <span>Frees up teacher time</span>
+                                                </li>
+                                                <li class="flex items-start">
+                                                    <i class="fas fa-check text-edu-green mt-1 mr-2"></i>
+                                                    <span>Consistent grading</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                            <h6 class="font-medium text-gray-700 mb-2">Ready for Manual Review</h6>
+                                            <ul class="text-sm text-gray-600 space-y-1">
+                                                <li class="flex items-start">
+                                                    <i class="fas fa-edit text-edu-orange mt-1 mr-2"></i>
+                                                    <span>2 essays from Mid-term Project</span>
+                                                </li>
+                                                <li class="flex items-start">
+                                                    <i class="fas fa-edit text-edu-orange mt-1 mr-2"></i>
+                                                    <span>3 creative responses</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="w-full bg-edu-green text-white py-3 rounded-lg font-medium flex items-center justify-center">
+                                        <i class="fas fa-robot mr-2"></i> Start AI Grading Session
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Substitute Page -->
+        <div class="page fade-in" id="substitute-page">
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-user-friends text-edu-orange mr-3"></i> Substitute Teacher Mode
+                        </h2>
+                        <p class="text-gray-600 mt-2">One-click activation for sudden teacher absence - eliminate classroom chaos</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="bg-edu-orange text-white px-4 py-2 rounded-lg font-medium flex items-center" id="activateSubstitute">
+                            <i class="fas fa-play mr-2"></i> Activate Substitute Mode
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Substitute Activation -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                        <div class="bg-edu-orange text-white p-5">
+                            <h4 class="text-xl font-bold">Substitute Setup</h4>
+                            <p class="opacity-90">Prepare for substitute teachers</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="mb-6">
+                                <div class="flex items-center p-4 bg-orange-50 rounded-lg">
+                                    <i class="fas fa-info-circle text-edu-orange text-2xl mr-4"></i>
+                                    <div>
+                                        <h5 class="font-bold text-gray-800">Ready for Activation</h5>
+                                        <p class="text-gray-700">When activated, substitute teachers get instant access to everything they need.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-700">Lesson Plans Shared</span>
+                                    <span class="font-medium">3 ready</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-700">Materials Uploaded</span>
+                                    <span class="font-medium">8 files</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-700">Substitute Access</span>
+                                    <span class="font-medium">Enabled</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-700">Auto-sync</span>
+                                    <span class="font-medium text-edu-green">Active</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 pt-6 border-t">
+                                <h5 class="font-medium text-gray-700 mb-3">Quick Setup Checklist</h5>
+                                <div class="space-y-2">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="check1" class="mr-2" checked>
+                                        <label for="check1" class="text-sm text-gray-700">Share lesson plans</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="check2" class="mr-2" checked>
+                                        <label for="check2" class="text-sm text-gray-700">Upload teaching materials</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="check3" class="mr-2">
+                                        <label for="check3" class="text-sm text-gray-700">Set substitute permissions</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="check4" class="mr-2" checked>
+                                        <label for="check4" class="text-sm text-gray-700">Enable attendance access</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Substitute Contacts -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <h4 class="font-bold text-gray-800">Substitute Contacts</h4>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="space-y-4">
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-10 h-10 bg-edu-orange rounded-full flex items-center justify-center text-white font-medium mr-3">
+                                        MJ
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Mr. Johnson</p>
+                                        <p class="text-sm text-gray-600">Math specialist • Available</p>
+                                    </div>
+                                    <div class="ml-auto">
+                                        <button class="text-edu-orange hover:bg-orange-50 p-1 rounded">
+                                            <i class="fas fa-phone"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-10 h-10 bg-edu-blue rounded-full flex items-center justify-center text-white font-medium mr-3">
+                                        ST
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Ms. Thompson</p>
+                                        <p class="text-sm text-gray-600">General substitute • Available</p>
+                                    </div>
+                                    <div class="ml-auto">
+                                        <button class="text-edu-blue hover:bg-blue-50 p-1 rounded">
+                                            <i class="fas fa-phone"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full mt-6 bg-white text-gray-700 border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center">
+                                <i class="fas fa-user-plus mr-2"></i> Add New Substitute
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Substitute Dashboard -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <h4 class="text-xl font-bold text-gray-800">Substitute Dashboard Preview</h4>
+                            <p class="text-gray-600">What the substitute teacher will see when mode is activated</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-5 bg-gray-50 mb-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="bg-edu-orange text-white p-2 rounded-full mr-3">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold text-gray-800">Substitute Dashboard</h5>
+                                        <p class="text-sm text-gray-600">Access for: Substitute Teacher</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                        <h6 class="font-medium text-gray-700 mb-2">Today's Schedule</h6>
+                                        <ul class="text-sm text-gray-600 space-y-2">
+                                            <li class="flex justify-between">
+                                                <span>Period 1 (8:30-9:30)</span>
+                                                <span class="font-medium">Grade 9 Algebra</span>
+                                            </li>
+                                            <li class="flex justify-between">
+                                                <span>Period 2 (10:00-11:00)</span>
+                                                <span class="font-medium text-edu-orange font-bold">Grade 10 Math</span>
+                                            </li>
+                                            <li class="flex justify-between">
+                                                <span>Period 3 (11:30-12:30)</span>
+                                                <span class="font-medium">Grade 11 Calculus</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                        <h6 class="font-medium text-gray-700 mb-2">Available Materials</h6>
+                                        <ul class="text-sm text-gray-600 space-y-1">
+                                            <li class="flex items-center">
+                                                <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                                                <span>Lesson Plan - Quadratic Functions</span>
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="fas fa-file-word text-blue-500 mr-2"></i>
+                                                <span>Worksheet - Graphing Practice</span>
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="fas fa-presentation text-green-500 mr-2"></i>
+                                                <span>Slides - Chapter 5 Review</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                    <h6 class="font-medium text-gray-700 mb-2 flex items-center">
+                                        <i class="fas fa-clipboard-list text-edu-blue mr-2"></i> Attendance Instructions
+                                    </h6>
+                                    <p class="text-sm text-gray-600">Use the QR code or class code <span class="font-bold">MATH10A2</span> to mark attendance. All data syncs automatically to Ms. Rodriguez.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Emergency Activation -->
+                            <div class="border border-red-200 rounded-lg p-5 bg-red-50 mb-6">
+                                <h5 class="font-bold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i> Emergency Activation
+                                </h5>
+                                <p class="text-gray-700 mb-4">For sudden absences (illness, emergency). Activates immediately and notifies assigned substitutes.</p>
+                                
+                                <div class="flex flex-wrap gap-3">
+                                    <button class="bg-red-600 text-white px-4 py-3 rounded-lg font-medium flex items-center">
+                                        <i class="fas fa-bolt mr-2"></i> Activate Emergency Mode
+                                    </button>
+                                    <button class="bg-white text-red-600 border border-red-600 px-4 py-3 rounded-lg font-medium flex items-center">
+                                        <i class="fas fa-user-plus mr-2"></i> Assign Substitute
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Auto-Sync Features -->
+                            <div>
+                                <h5 class="font-bold text-gray-800 mb-4">Auto-Sync Features</h5>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <div class="bg-green-100 p-2 rounded-lg mr-3">
+                                                <i class="fas fa-sync-alt text-edu-green"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Attendance Sync</p>
+                                                <p class="text-sm text-gray-600">Automatically appears in your records</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                                                <i class="fas fa-sticky-note text-edu-blue"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Class Notes</p>
+                                                <p class="text-sm text-gray-600">Saved and tagged by class period</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <div class="bg-orange-100 p-2 rounded-lg mr-3">
+                                                <i class="fas fa-exclamation-circle text-edu-orange"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Behavior Incidents</p>
+                                                <p class="text-sm text-gray-600">Flagged issues automatically alerted</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <div class="bg-purple-100 p-2 rounded-lg mr-3">
+                                                <i class="fas fa-check-double text-edu-purple"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Completed Work</p>
+                                                <p class="text-sm text-gray-600">Track what was covered vs. planned</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Class Chat Page -->
+        <div class="page fade-in" id="chat-page">
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-comments text-edu-pink mr-3"></i> Class Chat & Collaboration
+                        </h2>
+                        <p class="text-gray-600 mt-2">Communicate with students, share files, and answer questions in real-time</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="bg-edu-pink text-white px-4 py-2 rounded-lg font-medium flex items-center" id="newAnnouncement">
+                            <i class="fas fa-bullhorn mr-2"></i> New Announcement
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Class List & Chat Selection -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                        <div class="bg-edu-pink text-white p-5">
+                            <h4 class="text-xl font-bold">Your Classes</h4>
+                            <p class="opacity-90 text-sm">Select a class to view chat</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="space-y-3" id="classList">
+                                <!-- Class list will be populated by JS -->
+                            </div>
+                            
+                            <div class="mt-6 pt-6 border-t">
+                                <h5 class="font-medium text-gray-700 mb-3">Group Chats</h5>
+                                <div class="space-y-3">
+                                    <div class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100" data-chat="group-project" data-type="group">
+                                        <div class="bg-purple-100 text-edu-purple p-2 rounded-lg mr-3">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Math Project Group</p>
+                                            <p class="text-sm text-gray-600">5 members • 3 new</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100" data-chat="homework-help" data-type="group">
+                                        <div class="bg-green-100 text-edu-green p-2 rounded-lg mr-3">
+                                            <i class="fas fa-question-circle"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Homework Help</p>
+                                            <p class="text-sm text-gray-600">12 members • 1 new</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Online Students -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <h4 class="font-bold text-gray-800">Online Now (5)</h4>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="space-y-3">
+                                <div class="flex items-center">
+                                    <div class="relative">
+                                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-edu-green font-medium mr-3">
+                                            MJ
+                                        </div>
+                                        <div class="absolute bottom-0 right-2 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Maria Garcia</p>
+                                        <p class="text-xs text-gray-500">Grade 10 Math</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <div class="relative">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-edu-blue font-medium mr-3">
+                                            AJ
+                                        </div>
+                                        <div class="absolute bottom-0 right-2 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Alex Johnson</p>
+                                        <p class="text-xs text-gray-500">Grade 10 Math</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <div class="relative">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-edu-purple font-medium mr-3">
+                                            EW
+                                        </div>
+                                        <div class="absolute bottom-0 right-2 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Emma Wilson</p>
+                                        <p class="text-xs text-gray-500">Grade 11 Calculus</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Window -->
+                <div class="lg:col-span-3">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden h-full">
+                        <div class="border-b p-5">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-xl" id="currentChatTitle">Select a Class</h4>
+                                    <p class="text-sm text-gray-500" id="currentChatDescription">Choose a class from the left to start chatting</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100" id="chatInfoBtn">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100" id="chatFilesBtn">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100" id="chatMembersBtn">
+                                        <i class="fas fa-users"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Messages Container -->
+                        <div class="p-5 chat-container" id="chatMessages">
+                            <!-- Default view when no chat is selected -->
+                            <div class="h-full flex flex-col items-center justify-center text-center py-12">
+                                <div class="bg-pink-100 text-edu-pink p-6 rounded-full mb-4">
+                                    <i class="fas fa-comments text-4xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Class Chat</h3>
+                                <p class="text-gray-600 mb-6 max-w-md">Select a class or group chat from the left panel to view messages, share files, and communicate with students.</p>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <div class="bg-blue-100 text-edu-blue p-3 rounded-full inline-block mb-2">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <p class="font-medium">Share Files</p>
+                                        <p class="text-sm text-gray-600">Upload worksheets, notes, and resources</p>
+                                    </div>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <div class="bg-green-100 text-edu-green p-3 rounded-full inline-block mb-2">
+                                            <i class="fas fa-link"></i>
+                                        </div>
+                                        <p class="font-medium">Share Links</p>
+                                        <p class="text-sm text-gray-600">Post helpful resources and references</p>
+                                    </div>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <div class="bg-purple-100 text-edu-purple p-3 rounded-full inline-block mb-2">
+                                            <i class="fas fa-question-circle"></i>
+                                        </div>
+                                        <p class="font-medium">Answer Questions</p>
+                                        <p class="text-sm text-gray-600">Help students with homework problems</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Message Input -->
+                        <div class="border-t p-5">
+                            <div class="flex items-center">
+                                <div class="flex space-x-2 mr-3">
+                                    <button class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100" id="attachFileBtn">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100" id="addLinkBtn">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100" id="addEmojiBtn">
+                                        <i class="far fa-smile"></i>
+                                    </button>
+                                </div>
+                                <div class="flex-grow">
+                                    <input type="text" 
+                                           class="w-full border border-gray-300 rounded-full py-3 px-4 focus:outline-none focus:ring-2 focus:ring-edu-pink focus:border-transparent" 
+                                           placeholder="Type your message here..." 
+                                           id="messageInput"
+                                           disabled>
+                                </div>
+                                <button class="ml-3 bg-edu-pink text-white p-3 rounded-full hover:bg-pink-600 transition-colors" id="sendMessageBtn" disabled>
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                            <div class="mt-3 text-xs text-gray-500 flex justify-between">
+                                <div>
+                                    <span id="charCount">0/500</span> characters
+                                </div>
+                                <div>
+                                    Press <kbd class="px-2 py-1 bg-gray-100 rounded">Enter</kbd> to send
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Info Panel (Hidden by default) -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden mt-8 hidden" id="chatInfoPanel">
+                        <div class="border-b p-5">
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-bold text-gray-800">Chat Information</h4>
+                                <button class="text-gray-500 hover:text-gray-700" id="closeChatInfoBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="mb-6">
+                                <h5 class="font-medium text-gray-700 mb-2">Class Details</h5>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <p class="text-sm text-gray-600" id="chatInfoDetails">No chat selected</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h5 class="font-medium text-gray-700 mb-2">Shared Files</h5>
+                                <div class="space-y-3" id="sharedFilesList">
+                                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                        <i class="fas fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                        <div class="flex-grow">
+                                            <p class="font-medium">Algebra_Worksheet_5.pdf</p>
+                                            <p class="text-sm text-gray-600">Shared by Ms. Rodriguez • Oct 12</p>
+                                        </div>
+                                        <button class="text-gray-500 hover:text-gray-700">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 class="font-medium text-gray-700 mb-2">Pinned Messages</h5>
+                                <div class="space-y-3" id="pinnedMessagesList">
+                                    <div class="flex items-start p-3 bg-yellow-50 rounded-lg">
+                                        <i class="fas fa-thumbtack text-yellow-500 mt-1 mr-3"></i>
+                                        <div>
+                                            <p class="font-medium">Homework Due Date Change</p>
+                                            <p class="text-sm text-gray-600">Algebra Homework #5 is now due on Friday instead of Thursday.</p>
+                                            <p class="text-xs text-gray-500 mt-1">Pinned by Ms. Rodriguez • 2 days ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Page -->
+        <div class="page fade-in" id="students-page">
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-user-graduate text-edu-indigo mr-3"></i> Student Profile Management
+                        </h2>
+                        <p class="text-gray-600 mt-2">Comprehensive student profiles with performance analytics, behavior tracking, and parent contacts</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="bg-edu-indigo text-white px-4 py-2 rounded-lg font-medium flex items-center" id="addStudent">
+                            <i class="fas fa-user-plus mr-2"></i> Add Student
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Student List & Search -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                        <div class="bg-edu-indigo text-white p-5">
+                            <h4 class="text-xl font-bold">Student Directory</h4>
+                            <p class="opacity-90">Search and filter students</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="mb-4">
+                                <input type="text" class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-edu-indigo" placeholder="Search students...">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-medium mb-2">Filter by Class</label>
+                                <select class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-edu-indigo">
+                                    <option>All Classes</option>
+                                    <option>Grade 10 Mathematics</option>
+                                    <option>Grade 11 Calculus</option>
+                                    <option>Grade 9 Algebra</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-gray-700 font-medium mb-2">Filter by Performance</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button class="bg-green-50 text-edu-green border border-green-200 py-2 rounded-lg text-sm">High Achievers</button>
+                                    <button class="bg-yellow-50 text-yellow-700 border border-yellow-200 py-2 rounded-lg text-sm">Needs Support</button>
+                                    <button class="bg-blue-50 text-edu-blue border border-blue-200 py-2 rounded-lg text-sm">Average</button>
+                                    <button class="bg-gray-50 text-gray-700 border border-gray-200 py-2 rounded-lg text-sm">All Students</button>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3 max-h-80 overflow-y-auto scrollable-table">
+                                <div class="flex items-center p-3 bg-indigo-50 rounded-lg cursor-pointer" data-student="1">
+                                    <div class="w-10 h-10 bg-edu-indigo rounded-full flex items-center justify-center text-white font-medium mr-3">
+                                        AJ
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Alex Johnson</p>
+                                        <p class="text-sm text-gray-600">Grade 10 Math • 92% average</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100" data-student="2">
+                                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-medium mr-3">
+                                        MG
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Maria Garcia</p>
+                                        <p class="text-sm text-gray-600">Grade 10 Math • 96% average</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100" data-student="3">
+                                    <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-white font-medium mr-3">
+                                        JS
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">James Smith</p>
+                                        <p class="text-sm text-gray-600">Grade 10 Math • 78% average</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100" data-student="4">
+                                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium mr-3">
+                                        SW
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Sophia Williams</p>
+                                        <p class="text-sm text-gray-600">Grade 10 Math • 85% average</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100" data-student="5">
+                                    <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-medium mr-3">
+                                        BB
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Benjamin Brown</p>
+                                        <p class="text-sm text-gray-600">Grade 10 Math • 82% average</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Class Statistics -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <h4 class="font-bold text-gray-800">Class Statistics</h4>
+                            <p class="text-sm text-gray-500">Grade 10 Mathematics</p>
+                        </div>
+                        
+                        <div class="p-5">
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Class Average</span>
+                                        <span class="font-medium">84.6%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-edu-indigo h-2 rounded-full" style="width: 84.6%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Attendance Rate</span>
+                                        <span class="font-medium">92%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 92%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Assignment Completion</span>
+                                        <span class="font-medium">88%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 88%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Parent Engagement</span>
+                                        <span class="font-medium">76%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-purple-500 h-2 rounded-full" style="width: 76%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Student Profile -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="border-b p-5">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                                <div class="flex items-center mb-4 md:mb-0">
+                                    <div class="w-16 h-16 bg-edu-indigo rounded-full flex items-center justify-center text-white text-2xl font-medium mr-4">
+                                        AJ
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800 text-xl" id="studentName">Alex Johnson</h4>
+                                        <p class="text-gray-600" id="studentInfo">Grade 10 Mathematics • Student ID: STU-2023-001</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100">
+                                        <i class="fas fa-share"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-5">
+                            <!-- Student Details Tabs -->
+                            <div class="border-b mb-6">
+                                <div class="flex space-x-6">
+                                    <button class="pb-3 font-medium text-edu-indigo border-b-2 border-edu-indigo student-tab active" data-tab="overview">Overview</button>
+                                    <button class="pb-3 font-medium text-gray-500 hover:text-gray-700 student-tab" data-tab="performance">Performance</button>
+                                    <button class="pb-3 font-medium text-gray-500 hover:text-gray-700 student-tab" data-tab="attendance">Attendance</button>
+                                    <button class="pb-3 font-medium text-gray-500 hover:text-gray-700 student-tab" data-tab="behavior">Behavior</button>
+                                    <button class="pb-3 font-medium text-gray-500 hover:text-gray-700 student-tab" data-tab="contacts">Contacts</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Tab Content: Overview -->
+                            <div class="student-tab-content active" id="overview-tab">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <h5 class="font-bold text-gray-800 mb-3">Academic Summary</h5>
+                                        <div class="space-y-4">
+                                            <div>
+                                                <div class="flex justify-between mb-1">
+                                                    <span class="text-gray-700">Current Average</span>
+                                                    <span class="font-bold text-edu-indigo">92%</span>
+                                                </div>
+                                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                                    <div class="bg-edu-indigo h-2 rounded-full" style="width: 92%"></div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div>
+                                                <div class="flex justify-between mb-1">
+                                                    <span class="text-gray-700">Class Rank</span>
+                                                    <span class="font-bold">2/25</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div>
+                                                <div class="flex justify-between mb-1">
+                                                    <span class="text-gray-700">Assignments Completed</span>
+                                                    <span class="font-bold">24/25 (96%)</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div>
+                                                <div class="flex justify-between mb-1">
+                                                    <span class="text-gray-700">Attendance Rate</span>
+                                                    <span class="font-bold">94%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <h5 class="font-bold text-gray-800 mb-3">Recent Assignments</h5>
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                                <div>
+                                                    <p class="font-medium">Algebra Homework #4</p>
+                                                    <p class="text-sm text-gray-600">Oct 10 • Quadratic Equations</p>
+                                                </div>
+                                                <span class="bg-green-100 text-green-800 font-medium px-3 py-1 rounded-full">95%</span>
+                                            </div>
+                                            
+                                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                                <div>
+                                                    <p class="font-medium">Chapter 4 Quiz</p>
+                                                    <p class="text-sm text-gray-600">Oct 5 • Polynomial Functions</p>
+                                                </div>
+                                                <span class="bg-green-100 text-green-800 font-medium px-3 py-1 rounded-full">98%</span>
+                                            </div>
+                                            
+                                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                                <div>
+                                                    <p class="font-medium">Project Proposal</p>
+                                                    <p class="text-sm text-gray-600">Sep 28 • Real-world Applications</p>
+                                                </div>
+                                                <span class="bg-blue-100 text-blue-800 font-medium px-3 py-1 rounded-full">88%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-6">
+                                    <h5 class="font-bold text-gray-800 mb-3">Notes & Observations</h5>
+                                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                        <p class="text-gray-700">Alex shows excellent problem-solving skills but sometimes rushes through work, leading to minor calculation errors. Encouraged to double-check work.</p>
+                                        <p class="text-sm text-gray-600 mt-2">Last updated: Oct 12, 2023 by Ms. Rodriguez</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tab Content: Performance -->
+                            <div class="student-tab-content" id="performance-tab">
+                                <div class="mb-6">
+                                    <h5 class="font-bold text-gray-800 mb-3">Performance Trends</h5>
+                                    <div class="bg-gray-50 p-4 rounded-lg h-48 flex items-center justify-center">
+                                        <div class="text-center">
+                                            <i class="fas fa-chart-line text-3xl text-gray-400 mb-2"></i>
+                                            <p class="text-gray-600">Performance chart would show here</p>
+                                            <p class="text-sm text-gray-500">Showing trends over time across different subjects</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <h5 class="font-bold text-gray-800 mb-3">Strengths</h5>
+                                        <ul class="space-y-2">
+                                            <li class="flex items-start">
+                                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                                <span>Excellent problem-solving abilities</span>
+                                            </li>
+                                            <li class="flex items-start">
+                                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                                <span>Strong conceptual understanding</span>
+                                            </li>
+                                            <li class="flex items-start">
+                                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                                <span>Consistent homework completion</span>
+                                            </li>
+                                            <li class="flex items-start">
+                                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                                <span>Active class participation</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div>
+                                        <h5 class="font-bold text-gray-800 mb-3">Areas for Improvement</h5>
+                                        <ul class="space-y-2">
+                                            <li class="flex items-start">
+                                                <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-2"></i>
+                                                <span>Needs to check work for calculation errors</span>
+                                            </li>
+                                            <li class="flex items-start">
+                                                <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-2"></i>
+                                                <span>Could contribute more to group work</span>
+                                            </li>
+                                            <li class="flex items-start">
+                                                <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-2"></i>
+                                                <span>Sometimes submits work close to deadline</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tab Content: Attendance -->
+                            <div class="student-tab-content" id="attendance-tab">
+                                <div class="mb-6">
+                                    <h5 class="font-bold text-gray-800 mb-3">Attendance Record (October 2023)</h5>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <div class="grid grid-cols-7 gap-2 mb-4">
+                                            <div class="text-center font-medium">Mon</div>
+                                            <div class="text-center font-medium">Tue</div>
+                                            <div class="text-center font-medium">Wed</div>
+                                            <div class="text-center font-medium">Thu</div>
+                                            <div class="text-center font-medium">Fri</div>
+                                            <div class="text-center font-medium">Sat</div>
+                                            <div class="text-center font-medium">Sun</div>
+                                            
+                                            <!-- Calendar days would go here -->
+                                            <div class="text-center p-2 bg-green-100 text-green-800 rounded">2</div>
+                                            <div class="text-center p-2 bg-green-100 text-green-800 rounded">3</div>
+                                            <div class="text-center p-2 bg-green-100 text-green-800 rounded">4</div>
+                                            <div class="text-center p-2 bg-green-100 text-green-800 rounded">5</div>
+                                            <div class="text-center p-2 bg-yellow-100 text-yellow-800 rounded">6</div>
+                                            <div class="text-center p-2 text-gray-400">7</div>
+                                            <div class="text-center p-2 text-gray-400">8</div>
+                                            
+                                            <div class="text-center p-2 bg-green-100 text-green-800 rounded">9</div>
+                                            <div class="text-center p-2 bg-green-100 text-green-800 rounded">10</div>
+                                            <div class="text-center p-2 bg-red-100 text-red-800 rounded">11</div>
+                                            <div class="text-center p-2 bg-green-100 text-green-800 rounded">12</div>
+                                            <div class="text-center p-2 bg-green-100 text-green-800 rounded">13</div>
+                                            <div class="text-center p-2 text-gray-400">14</div>
+                                            <div class="text-center p-2 text-gray-400">15</div>
+                                        </div>
+                                        <div class="flex justify-center space-x-4">
+                                            <div class="flex items-center">
+                                                <div class="w-3 h-3 bg-green-500 rounded-full mr-1"></div>
+                                                <span class="text-sm">Present</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <div class="w-3 h-3 bg-yellow-500 rounded-full mr-1"></div>
+                                                <span class="text-sm">Late</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <div class="w-3 h-3 bg-red-500 rounded-full mr-1"></div>
+                                                <span class="text-sm">Absent</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold text-gray-800 mb-3">Attendance Summary</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                                            <p class="font-medium text-green-800">Present</p>
+                                            <p class="text-2xl font-bold text-green-800">94%</p>
+                                            <p class="text-sm text-green-700">17 of 18 days</p>
+                                        </div>
+                                        
+                                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                            <p class="font-medium text-yellow-800">Late Arrivals</p>
+                                            <p class="text-2xl font-bold text-yellow-800">1</p>
+                                            <p class="text-sm text-yellow-700">Oct 6 (15 min late)</p>
+                                        </div>
+                                        
+                                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                                            <p class="font-medium text-red-800">Absences</p>
+                                            <p class="text-2xl font-bold text-red-800">1</p>
+                                            <p class="text-sm text-red-700">Oct 11 (sick day)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tab Content: Behavior -->
+                            <div class="student-tab-content" id="behavior-tab">
+                                <div class="mb-6">
+                                    <h5 class="font-bold text-gray-800 mb-3">Behavior Log</h5>
+                                    <div class="space-y-4">
+                                        <div class="flex items-start p-3 bg-green-50 rounded-lg border border-green-200">
+                                            <i class="fas fa-award text-green-500 mt-1 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium">Helped classmates with homework</p>
+                                                <p class="text-sm text-gray-600">Alex stayed after class to help two students understand quadratic equations.</p>
+                                                <p class="text-xs text-gray-500 mt-1">Oct 10, 2023 • Ms. Rodriguez</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                            <i class="fas fa-lightbulb text-blue-500 mt-1 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium">Excellent class participation</p>
+                                                <p class="text-sm text-gray-600">Asked insightful questions during the lesson on polynomial functions.</p>
+                                                <p class="text-xs text-gray-500 mt-1">Oct 5, 2023 • Ms. Rodriguez</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                                            <i class="fas fa-clock text-yellow-500 mt-1 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium">Late to class</p>
+                                                <p class="text-sm text-gray-600">Arrived 15 minutes late due to traffic. No prior notification.</p>
+                                                <p class="text-xs text-gray-500 mt-1">Oct 6, 2023 • Ms. Rodriguez</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold text-gray-800 mb-3">Behavior Metrics</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                            <div class="flex items-center mb-2">
+                                                <div class="bg-green-100 p-2 rounded-lg mr-3">
+                                                    <i class="fas fa-thumbs-up text-green-600"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium">Positive Incidents</p>
+                                                    <p class="text-2xl font-bold">8</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                            <div class="flex items-center mb-2">
+                                                <div class="bg-yellow-100 p-2 rounded-lg mr-3">
+                                                    <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium">Needs Attention</p>
+                                                    <p class="text-2xl font-bold">2</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tab Content: Contacts -->
+                            <div class="student-tab-content" id="contacts-tab">
+                                <div class="mb-6">
+                                    <h5 class="font-bold text-gray-800 mb-3">Parent/Guardian Contacts</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                            <div class="flex items-center mb-3">
+                                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium">Michael Johnson</p>
+                                                    <p class="text-sm text-gray-600">Father • Primary Contact</p>
+                                                </div>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <div class="flex items-center text-sm">
+                                                    <i class="fas fa-phone text-gray-500 mr-2 w-5"></i>
+                                                    <span>(555) 123-4567</span>
+                                                </div>
+                                                <div class="flex items-center text-sm">
+                                                    <i class="fas fa-envelope text-gray-500 mr-2 w-5"></i>
+                                                    <span>michael.johnson@email.com</span>
+                                                </div>
+                                                <div class="flex items-center text-sm">
+                                                    <i class="fas fa-briefcase text-gray-500 mr-2 w-5"></i>
+                                                    <span>Software Engineer</span>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 pt-4 border-t">
+                                                <p class="text-sm text-gray-600 mb-2">Preferred Communication:</p>
+                                                <div class="flex space-x-2">
+                                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Email</span>
+                                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">SMS</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                            <div class="flex items-center mb-3">
+                                                <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 mr-3">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium">Sarah Johnson</p>
+                                                    <p class="text-sm text-gray-600">Mother • Secondary Contact</p>
+                                                </div>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <div class="flex items-center text-sm">
+                                                    <i class="fas fa-phone text-gray-500 mr-2 w-5"></i>
+                                                    <span>(555) 987-6543</span>
+                                                </div>
+                                                <div class="flex items-center text-sm">
+                                                    <i class="fas fa-envelope text-gray-500 mr-2 w-5"></i>
+                                                    <span>sarah.johnson@email.com</span>
+                                                </div>
+                                                <div class="flex items-center text-sm">
+                                                    <i class="fas fa-briefcase text-gray-500 mr-2 w-5"></i>
+                                                    <span>Marketing Director</span>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 pt-4 border-t">
+                                                <p class="text-sm text-gray-600 mb-2">Last Contact:</p>
+                                                <p class="text-sm">Oct 5, 2023 - Discussed Alex's excellent quiz results</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold text-gray-800 mb-3">Contact History</h5>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <p class="text-gray-600">Contact log would show here with date, method, and summary of conversations.</p>
+                                        <button class="mt-3 text-edu-indigo hover:text-indigo-700 font-medium">
+                                            <i class="fas fa-plus mr-1"></i> Add Contact Record
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Notifications Modal -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" id="notificationsModal">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 max-h-[80vh] overflow-hidden">
+            <div class="border-b p-5">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800">Notifications</h3>
+                    <button class="text-gray-500 hover:text-gray-700" id="closeNotificationsBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-5 overflow-y-auto max-h-[60vh]">
+                <div class="space-y-4">
+                    <div class="flex items-start p-3 bg-blue-50 rounded-lg">
+                        <div class="bg-edu-blue text-white p-2 rounded-full mr-3">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Attendance reminder</p>
+                            <p class="text-sm text-gray-600">Remember to mark attendance for Period 2</p>
+                            <p class="text-xs text-gray-500 mt-1">10 minutes ago</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start p-3 bg-pink-50 rounded-lg">
+                        <div class="bg-edu-pink text-white p-2 rounded-full mr-3">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">New chat message</p>
+                            <p class="text-sm text-gray-600">Maria Garcia asked a question in Grade 10 Math chat</p>
+                            <p class="text-xs text-gray-500 mt-1">25 minutes ago</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start p-3 bg-green-50 rounded-lg">
+                        <div class="bg-edu-green text-white p-2 rounded-full mr-3">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Assignment submitted</p>
+                            <p class="text-sm text-gray-600">Alex Johnson submitted Algebra Homework #5</p>
+                            <p class="text-xs text-gray-500 mt-1">1 hour ago</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start p-3 bg-purple-50 rounded-lg">
+                        <div class="bg-edu-purple text-white p-2 rounded-full mr-3">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">AI suggestion ready</p>
+                            <p class="text-sm text-gray-600">Your lesson plan for Friday has been generated</p>
+                            <p class="text-xs text-gray-500 mt-1">2 hours ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t p-5">
+                <button class="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-medium">
+                    <i class="fas fa-check-circle mr-2"></i> Mark All as Read
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Seed data for students (for attendance and student management)
+        const students = [
+            { 
+                id: 1, 
+                name: "Alex Johnson", 
+                present: true, 
+                late: false, 
+                earlyLeave: false,
+                studentId: "STU-2023-001",
+                grade: "Grade 10 Mathematics",
+                average: 92,
+                attendanceRate: 94,
+                assignmentsCompleted: 24,
+                totalAssignments: 25,
+                classRank: 2,
+                totalStudents: 25
+            },
+            { 
+                id: 2, 
+                name: "Maria Garcia", 
+                present: true, 
+                late: false, 
+                earlyLeave: false,
+                studentId: "STU-2023-002",
+                grade: "Grade 10 Mathematics",
+                average: 96,
+                attendanceRate: 98,
+                assignmentsCompleted: 25,
+                totalAssignments: 25,
+                classRank: 1,
+                totalStudents: 25
+            },
+            { 
+                id: 3, 
+                name: "James Smith", 
+                present: true, 
+                late: true, 
+                earlyLeave: false,
+                studentId: "STU-2023-003",
+                grade: "Grade 10 Mathematics",
+                average: 78,
+                attendanceRate: 85,
+                assignmentsCompleted: 20,
+                totalAssignments: 25,
+                classRank: 18,
+                totalStudents: 25
+            },
+            { 
+                id: 4, 
+                name: "Sophia Williams", 
+                present: false, 
+                late: false, 
+                earlyLeave: false,
+                studentId: "STU-2023-004",
+                grade: "Grade 10 Mathematics",
+                average: 85,
+                attendanceRate: 92,
+                assignmentsCompleted: 23,
+                totalAssignments: 25,
+                classRank: 8,
+                totalStudents: 25
+            },
+            { 
+                id: 5, 
+                name: "Benjamin Brown", 
+                present: true, 
+                late: false, 
+                earlyLeave: true,
+                studentId: "STU-2023-005",
+                grade: "Grade 10 Mathematics",
+                average: 82,
+                attendanceRate: 88,
+                assignmentsCompleted: 22,
+                totalAssignments: 25,
+                classRank: 12,
+                totalStudents: 25
+            }
+        ];
+
+        // Seed data for classes (for chat)
+        const classes = [
+            { 
+                id: 'grade10-math', 
+                name: 'Grade 10 Mathematics', 
+                period: 'Period 2 (10:00 AM)', 
+                students: 25, 
+                unread: 8,
+                description: 'Algebra II - Quadratic functions and graphs'
+            },
+            { 
+                id: 'grade11-calc', 
+                name: 'Grade 11 Calculus', 
+                period: 'Period 3 (11:30 AM)', 
+                students: 18, 
+                unread: 3,
+                description: 'AP Calculus AB - Limits and derivatives'
+            },
+            { 
+                id: 'grade9-algebra', 
+                name: 'Grade 9 Algebra', 
+                period: 'Period 1 (8:30 AM)', 
+                students: 22, 
+                unread: 2,
+                description: 'Algebra I - Linear equations and inequalities'
+            },
+            { 
+                id: 'grade12-stats', 
+                name: 'Grade 12 Statistics', 
+                period: 'Period 4 (1:00 PM)', 
+                students: 15, 
+                unread: 1,
+                description: 'AP Statistics - Probability and data analysis'
+            }
+        ];
+
+        // Seed data for chat messages
+        const chatMessages = {
+            'grade10-math': [
+                {
+                    id: 1,
+                    sender: 'Maria Garcia',
+                    senderId: 'student2',
+                    senderInitials: 'MG',
+                    type: 'text',
+                    content: 'Ms. Rodriguez, I have a question about problem #5 on the homework. Can we go over it in class tomorrow?',
+                    timestamp: '2023-10-15T09:45:00',
+                    isTeacher: false
+                },
+                {
+                    id: 2,
+                    sender: 'Ms. Rodriguez',
+                    senderId: 'teacher1',
+                    senderInitials: 'MR',
+                    type: 'text',
+                    content: 'Absolutely, Maria! I\'ve actually prepared a special example for that problem. We\'ll go through it step by step.',
+                    timestamp: '2023-10-15T09:50:00',
+                    isTeacher: true
+                },
+                {
+                    id: 3,
+                    sender: 'Alex Johnson',
+                    senderId: 'student1',
+                    senderInitials: 'AJ',
+                    type: 'file',
+                    content: 'Algebra_Worksheet_4_Completed.pdf',
+                    fileType: 'pdf',
+                    fileSize: '2.4 MB',
+                    timestamp: '2023-10-15T10:15:00',
+                    isTeacher: false
+                },
+                {
+                    id: 4,
+                    sender: 'Ms. Rodriguez',
+                    senderId: 'teacher1',
+                    senderInitials: 'MR',
+                    type: 'link',
+                    content: 'Helpful video on quadratic functions',
+                    url: 'https://www.khanacademy.org/math/algebra/x2f8bb11595b61c86:quadratic-functions-equations',
+                    timestamp: '2023-10-15T10:30:00',
+                    isTeacher: true
+                },
+                {
+                    id: 5,
+                    sender: 'James Smith',
+                    senderId: 'student3',
+                    senderInitials: 'JS',
+                    type: 'text',
+                    content: 'Is the test still on Friday? I heard there might be a schedule change.',
+                    timestamp: '2023-10-15T11:05:00',
+                    isTeacher: false
+                },
+                {
+                    id: 6,
+                    sender: 'Ms. Rodriguez',
+                    senderId: 'teacher1',
+                    senderInitials: 'MR',
+                    type: 'announcement',
+                    content: 'IMPORTANT: The Chapter 5 test has been moved to Monday to give everyone more time to prepare. Use the extra days to review the practice problems!',
+                    timestamp: '2023-10-15T11:10:00',
+                    isTeacher: true
+                }
+            ],
+            'grade11-calc': [
+                {
+                    id: 1,
+                    sender: 'Emma Wilson',
+                    senderId: 'student8',
+                    senderInitials: 'EW',
+                    type: 'text',
+                    content: 'Can someone explain the chain rule example from today? I\'m confused about step 3.',
+                    timestamp: '2023-10-15T12:45:00',
+                    isTeacher: false
+                },
+                {
+                    id: 2,
+                    sender: 'Ms. Rodriguez',
+                    senderId: 'teacher1',
+                    senderInitials: 'MR',
+                    type: 'text',
+                    content: 'I\'ve uploaded the worked-out solution to the class drive. Check the "Chain Rule Examples" folder.',
+                    timestamp: '2023-10-15T13:00:00',
+                    isTeacher: true
+                }
+            ],
+            'group-project': [
+                {
+                    id: 1,
+                    sender: 'Alex Johnson',
+                    senderId: 'student1',
+                    senderInitials: 'AJ',
+                    type: 'text',
+                    content: 'Hey team, I\'ve created the first draft of our project outline. Can everyone review it by tomorrow?',
+                    timestamp: '2023-10-14T16:30:00',
+                    isTeacher: false
+                },
+                {
+                    id: 2,
+                    sender: 'Maria Garcia',
+                    senderId: 'student2',
+                    senderInitials: 'MG',
+                    type: 'text',
+                    content: 'I\'ll take a look tonight! I can work on the research section.',
+                    timestamp: '2023-10-14T17:15:00',
+                    isTeacher: false
+                }
+            ]
+        };
+
+        // Seed data for shared files
+        const sharedFiles = {
+            'grade10-math': [
+                { name: 'Algebra_Worksheet_5.pdf', type: 'pdf', size: '1.8 MB', sharedBy: 'Ms. Rodriguez', date: 'Oct 12' },
+                { name: 'Quadratic_Functions_Review.pptx', type: 'ppt', size: '4.2 MB', sharedBy: 'Ms. Rodriguez', date: 'Oct 10' },
+                { name: 'Homework_Solutions_Week4.pdf', type: 'pdf', size: '3.1 MB', sharedBy: 'Ms. Rodriguez', date: 'Oct 8' },
+                { name: 'Project_Ideas.docx', type: 'doc', size: '0.8 MB', sharedBy: 'Alex Johnson', date: 'Oct 11' }
+            ],
+            'grade11-calc': [
+                { name: 'Limits_Practice_Problems.pdf', type: 'pdf', size: '2.5 MB', sharedBy: 'Ms. Rodriguez', date: 'Oct 13' },
+                { name: 'Derivatives_Cheat_Sheet.png', type: 'image', size: '1.2 MB', sharedBy: 'Ms. Rodriguez', date: 'Oct 9' }
+            ]
+        };
+
+        // Current state
+        let currentPage = 'dashboard';
+        let currentChatId = null;
+        let currentChatType = null; // 'class' or 'group'
+        let selectedStudentId = 1;
+        
+        // Page navigation system
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            const pageElement = document.getElementById(`${pageId}-page`);
+            if (pageElement) {
+                pageElement.classList.add('active');
+                pageElement.classList.add('fade-in');
+                currentPage = pageId;
+                
+                // Update active state in navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    if (link.getAttribute('data-page') === pageId) {
+                        link.classList.add('text-white', 'font-bold');
+                        link.classList.remove('hover:text-gray-200');
+                    } else {
+                        link.classList.remove('text-white', 'font-bold');
+                        link.classList.add('hover:text-gray-200');
+                    }
+                });
+                
+                // Initialize page-specific content
+                if (pageId === 'attendance') {
+                    renderAttendanceTable();
+                    updateAttendanceStats();
+                } else if (pageId === 'students') {
+                    renderStudentProfile(selectedStudentId);
+                    setupStudentTabs();
+                } else if (pageId === 'chat') {
+                    initializeChatPage();
+                }
+                
+                // Scroll to top of page
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        // Render attendance table
+        function renderAttendanceTable() {
+            const attendanceTable = document.getElementById('attendanceTable');
+            if (!attendanceTable) return;
+            
+            attendanceTable.innerHTML = '';
+            
+            students.forEach(student => {
+                let statusClass = 'bg-green-100 text-green-800';
+                let statusText = 'Present';
+                let icon = 'fa-check-circle';
+                let time = '10:02 AM';
+                
+                if (!student.present) {
+                    statusClass = 'bg-red-100 text-red-800';
+                    statusText = 'Absent';
+                    icon = 'fa-times-circle';
+                    time = '-';
+                } else if (student.late) {
+                    statusClass = 'bg-yellow-100 text-yellow-800';
+                    statusText = 'Late';
+                    icon = 'fa-clock';
+                    time = '10:15 AM';
+                } else if (student.earlyLeave) {
+                    statusClass = 'bg-orange-100 text-orange-800';
+                    statusText = 'Left Early';
+                    icon = 'fa-sign-out-alt';
+                    time = '10:45 AM';
+                }
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b table-row-hover';
+                row.innerHTML = `
+                    <td class="py-4 px-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-edu-blue rounded-full flex items-center justify-center text-white font-medium mr-3">
+                                ${student.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800">${student.name}</p>
+                                <p class="text-sm text-gray-600">Student ID: ${student.studentId}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <span class="px-3 py-1 rounded-full text-sm font-medium ${statusClass}">
+                            <i class="fas ${icon} mr-1"></i>${statusText}
+                        </span>
+                    </td>
+                    <td class="py-4 px-4">
+                        <p class="text-gray-700">${time}</p>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="flex space-x-2">
+                            <button class="text-gray-500 hover:text-edu-blue p-1 toggle-attendance" data-id="${student.id}" data-status="present">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="text-gray-500 hover:text-yellow-500 p-1 toggle-attendance" data-id="${student.id}" data-status="late">
+                                <i class="fas fa-clock"></i>
+                            </button>
+                            <button class="text-gray-500 hover:text-red-500 p-1 toggle-attendance" data-id="${student.id}" data-status="absent">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="text-gray-500 hover:text-orange-500 p-1 toggle-attendance" data-id="${student.id}" data-status="early">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                attendanceTable.appendChild(row);
+            });
+            
+            // Add event listeners to toggle buttons
+            document.querySelectorAll('.toggle-attendance').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const studentId = parseInt(this.getAttribute('data-id'));
+                    const status = this.getAttribute('data-status');
+                    
+                    const student = students.find(s => s.id === studentId);
+                    if (student) {
+                        // Reset all statuses
+                        student.present = false;
+                        student.late = false;
+                        student.earlyLeave = false;
+                        
+                        // Set new status
+                        if (status === 'present') {
+                            student.present = true;
+                        } else if (status === 'late') {
+                            student.present = true;
+                            student.late = true;
+                        } else if (status === 'absent') {
+                            student.present = false;
+                        } else if (status === 'early') {
+                            student.present = true;
+                            student.earlyLeave = true;
+                        }
+                        
+                        // Update the attendance stats
+                        updateAttendanceStats();
+                        renderAttendanceTable();
+                    }
+                });
+            });
+        }
+        
+        // Update attendance statistics
+        function updateAttendanceStats() {
+            const presentCount = students.filter(s => s.present).length;
+            const absentCount = students.length - presentCount;
+            
+            // Update counts on attendance page
+            const presentCountElement = document.getElementById('presentCount');
+            const absentCountElement = document.getElementById('absentCount');
+            
+            if (presentCountElement) presentCountElement.textContent = presentCount;
+            if (absentCountElement) absentCountElement.textContent = absentCount;
+            
+            // Update dashboard stats if on dashboard
+            if (currentPage === 'dashboard') {
+                const dashboardStats = document.querySelector('#dashboard-page .text-3xl.font-bold.text-gray-800');
+                if (dashboardStats) {
+                    dashboardStats.textContent = `${presentCount}/${students.length}`;
+                    
+                    const percentage = Math.round((presentCount / students.length) * 100);
+                    const percentageElement = document.querySelector('#dashboard-page .text-edu-green.text-sm.mt-1');
+                    if (percentageElement) {
+                        percentageElement.innerHTML = `<i class="fas fa-arrow-up mr-1"></i> ${percentage}% present`;
+                    }
+                }
+            }
+        }
+        
+        // Render student profile
+        function renderStudentProfile(studentId) {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            // Update student name and info
+            document.getElementById('studentName').textContent = student.name;
+            document.getElementById('studentInfo').textContent = `${student.grade} • Student ID: ${student.studentId}`;
+            
+            // Update student list selection
+            document.querySelectorAll('[data-student]').forEach(el => {
+                if (parseInt(el.getAttribute('data-student')) === studentId) {
+                    el.classList.add('bg-indigo-50');
+                    el.classList.remove('bg-gray-50', 'hover:bg-gray-100');
+                } else {
+                    el.classList.remove('bg-indigo-50');
+                    el.classList.add('bg-gray-50', 'hover:bg-gray-100');
+                }
+            });
+        }
+        
+        // Setup student profile tabs
+        function setupStudentTabs() {
+            document.querySelectorAll('.student-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    document.querySelectorAll('.student-tab').forEach(t => {
+                        t.classList.remove('active', 'text-edu-indigo', 'border-edu-indigo');
+                        t.classList.add('text-gray-500');
+                    });
+                    
+                    this.classList.add('active', 'text-edu-indigo', 'border-edu-indigo');
+                    this.classList.remove('text-gray-500');
+                    
+                    // Show active tab content
+                    document.querySelectorAll('.student-tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Student list click events
+            document.querySelectorAll('[data-student]').forEach(el => {
+                el.addEventListener('click', function() {
+                    const studentId = parseInt(this.getAttribute('data-student'));
+                    selectedStudentId = studentId;
+                    renderStudentProfile(studentId);
+                });
+            });
+        }
+        
+        // Initialize chat page
+        function initializeChatPage() {
+            renderClassList();
+            
+            // If a chat was previously selected, show it
+            if (currentChatId) {
+                showChat(currentChatId, currentChatType);
+            }
+        }
+        
+        // Render class list
+        function renderClassList() {
+            const classList = document.getElementById('classList');
+            if (!classList) return;
+            
+            classList.innerHTML = '';
+            
+            classes.forEach(cls => {
+                const classElement = document.createElement('div');
+                classElement.className = `flex items-center p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors ${currentChatId === cls.id && currentChatType === 'class' ? 'bg-pink-50 border border-pink-200' : 'bg-gray-50'}`;
+                classElement.setAttribute('data-chat', cls.id);
+                classElement.setAttribute('data-type', 'class');
+                
+                let unreadBadge = '';
+                if (cls.unread > 0) {
+                    unreadBadge = `<span class="ml-auto bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">${cls.unread}</span>`;
+                }
+                
+                classElement.innerHTML = `
+                    <div class="bg-pink-100 text-edu-pink p-2 rounded-lg mr-3">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <p class="font-medium">${cls.name}</p>
+                        <p class="text-sm text-gray-600">${cls.period} • ${cls.students} students</p>
+                    </div>
+                    ${unreadBadge}
+                `;
+                
+                classElement.addEventListener('click', () => {
+                    showChat(cls.id, 'class');
+                });
+                
+                classList.appendChild(classElement);
+            });
+        }
+        
+        // Show chat for a specific class or group
+        function showChat(chatId, type = 'class') {
+            currentChatId = chatId;
+            currentChatType = type;
+            
+            // Update UI for selected chat
+            document.querySelectorAll('#classList > div, [data-chat]').forEach(el => {
+                const elChatId = el.getAttribute('data-chat');
+                const elType = el.getAttribute('data-type');
+                if (elChatId === chatId && elType === type) {
+                    el.classList.add('bg-pink-50', 'border', 'border-pink-200');
+                    el.classList.remove('bg-gray-50', 'hover:bg-gray-100');
+                } else {
+                    el.classList.remove('bg-pink-50', 'border', 'border-pink-200');
+                    el.classList.add('bg-gray-50', 'hover:bg-gray-100');
+                }
+            });
+            
+            // Update chat title
+            const chatTitle = document.getElementById('currentChatTitle');
+            const chatDescription = document.getElementById('currentChatDescription');
+            
+            if (type === 'class') {
+                const cls = classes.find(c => c.id === chatId);
+                if (cls) {
+                    chatTitle.textContent = cls.name;
+                    chatDescription.textContent = cls.description;
+                    
+                    // Update chat info details
+                    document.getElementById('chatInfoDetails').textContent = `${cls.name} - ${cls.period}. ${cls.students} students enrolled.`;
+                }
+            } else if (type === 'group') {
+                if (chatId === 'group-project') {
+                    chatTitle.textContent = 'Math Project Group';
+                    chatDescription.textContent = 'Collaboration space for the quadratic functions project';
+                    document.getElementById('chatInfoDetails').textContent = 'Group chat for the Math Project. 5 members working on the quadratic functions project.';
+                } else if (chatId === 'homework-help') {
+                    chatTitle.textContent = 'Homework Help';
+                    chatDescription.textContent = 'Ask and answer homework questions';
+                    document.getElementById('chatInfoDetails').textContent = 'Homework help chat. 12 members. Students can ask questions and help each other.';
+                }
+            }
+            
+            // Enable message input
+            document.getElementById('messageInput').disabled = false;
+            document.getElementById('sendMessageBtn').disabled = false;
+            
+            // Render chat messages
+            renderChatMessages(chatId);
+            
+            // Render shared files
+            renderSharedFiles(chatId);
+        }
+        
+        // Render chat messages
+        function renderChatMessages(chatId) {
+            const chatMessagesContainer = document.getElementById('chatMessages');
+            if (!chatMessagesContainer) return;
+            
+            const messages = chatMessages[chatId] || [];
+            
+            if (messages.length === 0) {
+                chatMessagesContainer.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center py-12">
+                        <div class="bg-gray-100 text-gray-500 p-6 rounded-full mb-4">
+                            <i class="fas fa-comment-slash text-4xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">No messages yet</h3>
+                        <p class="text-gray-600 mb-6 max-w-md">Start the conversation! Send a message to your students.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let messagesHTML = '';
+            
+            messages.forEach(message => {
+                const messageClass = message.isTeacher ? 'sent' : 'received';
+                const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                let messageContent = '';
+                
+                if (message.type === 'text') {
+                    messageContent = `
+                        <div class="message-bubble">
+                            <p>${message.content}</p>
+                        </div>
+                    `;
+                } else if (message.type === 'file') {
+                    let fileIcon = 'fa-file';
+                    if (message.fileType === 'pdf') fileIcon = 'fa-file-pdf text-red-500';
+                    else if (message.fileType === 'doc' || message.fileType === 'docx') fileIcon = 'fa-file-word text-blue-500';
+                    else if (message.fileType === 'ppt' || message.fileType === 'pptx') fileIcon = 'fa-file-powerpoint text-orange-500';
+                    
+                    messageContent = `
+                        <div class="message-bubble bg-white border border-gray-200">
+                            <div class="flex items-center">
+                                <i class="fas ${fileIcon} text-xl mr-3"></i>
+                                <div>
+                                    <p class="font-medium">${message.content}</p>
+                                    <p class="text-sm text-gray-500">${message.fileSize || 'File'} • ${message.isTeacher ? 'Shared by teacher' : 'Shared by student'}</p>
+                                </div>
+                            </div>
+                            <button class="mt-2 text-edu-blue hover:text-blue-700 text-sm font-medium">
+                                <i class="fas fa-download mr-1"></i> Download
+                            </button>
+                        </div>
+                    `;
+                } else if (message.type === 'link') {
+                    messageContent = `
+                        <div class="message-bubble bg-white border border-gray-200">
+                            <div class="flex items-start">
+                                <i class="fas fa-link text-edu-blue mt-1 mr-3"></i>
+                                <div>
+                                    <p class="font-medium">${message.content}</p>
+                                    <p class="text-sm text-gray-500 truncate max-w-xs">${message.url}</p>
+                                </div>
+                            </div>
+                            <a href="${message.url}" target="_blank" class="mt-2 text-edu-blue hover:text-blue-700 text-sm font-medium inline-block">
+                                <i class="fas fa-external-link-alt mr-1"></i> Open Link
+                            </a>
+                        </div>
+                    `;
+                } else if (message.type === 'announcement') {
+                    messageContent = `
+                        <div class="message-bubble bg-yellow-50 border border-yellow-200">
+                            <div class="flex items-start">
+                                <i class="fas fa-bullhorn text-yellow-600 mt-1 mr-3"></i>
+                                <div>
+                                    <p class="font-bold text-yellow-800 mb-1">ANNOUNCEMENT</p>
+                                    <p class="text-gray-800">${message.content}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                messagesHTML += `
+                    <div class="chat-message ${messageClass}">
+                        <div class="flex ${messageClass === 'sent' ? 'flex-row-reverse' : ''} items-end mb-1">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center ${message.isTeacher ? 'bg-edu-pink text-white' : 'bg-gray-200 text-gray-700'} font-medium mr-2">
+                                ${message.senderInitials}
+                            </div>
+                            <div class="${messageClass === 'sent' ? 'mr-2' : 'ml-2'}">
+                                <p class="text-sm font-medium ${messageClass === 'sent' ? 'text-right' : ''}">${message.sender}</p>
+                                <p class="text-xs text-gray-500 ${messageClass === 'sent' ? 'text-right' : ''}">${time}</p>
+                            </div>
+                        </div>
+                        ${messageContent}
+                    </div>
+                `;
+            });
+            
+            chatMessagesContainer.innerHTML = messagesHTML;
+            
+            // Scroll to bottom
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        }
+        
+        // Render shared files
+        function renderSharedFiles(chatId) {
+            const sharedFilesList = document.getElementById('sharedFilesList');
+            if (!sharedFilesList) return;
+            
+            const files = sharedFiles[chatId] || [];
+            
+            if (files.length === 0) {
+                sharedFilesList.innerHTML = '<p class="text-gray-500 text-center py-4">No files shared yet</p>';
+                return;
+            }
+            
+            let filesHTML = '';
+            
+            files.forEach(file => {
+                let fileIcon = 'fa-file';
+                let iconColor = 'text-gray-500';
+                
+                if (file.type === 'pdf') {
+                    fileIcon = 'fa-file-pdf';
+                    iconColor = 'text-red-500';
+                } else if (file.type === 'doc' || file.type === 'docx') {
+                    fileIcon = 'fa-file-word';
+                    iconColor = 'text-blue-500';
+                } else if (file.type === 'ppt' || file.type === 'pptx') {
+                    fileIcon = 'fa-file-powerpoint';
+                    iconColor = 'text-orange-500';
+                } else if (file.type === 'image') {
+                    fileIcon = 'fa-file-image';
+                    iconColor = 'text-green-500';
+                }
+                
+                filesHTML += `
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <i class="fas ${fileIcon} ${iconColor} text-xl mr-3"></i>
+                        <div class="flex-grow">
+                            <p class="font-medium">${file.name}</p>
+                            <p class="text-sm text-gray-600">${file.size} • Shared by ${file.sharedBy} • ${file.date}</p>
+                        </div>
+                        <button class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            sharedFilesList.innerHTML = filesHTML;
+        }
+        
+        // Send a new message
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (!message || !currentChatId) return;
+            
+            // Create new message object
+            const newMessage = {
+                id: Date.now(),
+                sender: 'Ms. Rodriguez',
+                senderId: 'teacher1',
+                senderInitials: 'MR',
+                type: 'text',
+                content: message,
+                timestamp: new Date().toISOString(),
+                isTeacher: true
+            };
+            
+            // Add to messages
+            if (!chatMessages[currentChatId]) {
+                chatMessages[currentChatId] = [];
+            }
+            chatMessages[currentChatId].push(newMessage);
+            
+            // Clear input
+            messageInput.value = '';
+            updateCharCount();
+            
+            // Re-render messages
+            renderChatMessages(currentChatId);
+            
+            // Simulate a student reply after 2 seconds
+            setTimeout(() => {
+                if (Math.random() > 0.5) { // 50% chance of reply
+                    const students = ['Alex Johnson', 'Maria Garcia', 'James Smith', 'Emma Wilson'];
+                    const randomStudent = students[Math.floor(Math.random() * students.length)];
+                    const studentInitials = randomStudent.split(' ').map(n => n[0]).join('');
+                    
+                    const replies = [
+                        'Thanks for clarifying that!',
+                        'I have a follow-up question about that topic.',
+                        'That makes sense now, thank you!',
+                        'When will we go over this in class?',
+                        'Can you share an example of this?'
+                    ];
+                    const randomReply = replies[Math.floor(Math.random() * replies.length)];
+                    
+                    const studentReply = {
+                        id: Date.now() + 1,
+                        sender: randomStudent,
+                        senderId: 'student' + (Math.floor(Math.random() * 5) + 1),
+                        senderInitials: studentInitials,
+                        type: 'text',
+                        content: randomReply,
+                        timestamp: new Date().toISOString(),
+                        isTeacher: false
+                    };
+                    
+                    chatMessages[currentChatId].push(studentReply);
+                    renderChatMessages(currentChatId);
+                    
+                    // Update unread count for this class
+                    if (currentChatType === 'class') {
+                        const clsIndex = classes.findIndex(c => c.id === currentChatId);
+                        if (clsIndex !== -1) {
+                            classes[clsIndex].unread += 1;
+                            renderClassList();
+                        }
+                    }
+                }
+            }, 2000);
+        }
+        
+        // Update character count
+        function updateCharCount() {
+            const messageInput = document.getElementById('messageInput');
+            const charCount = document.getElementById('charCount');
+            if (!messageInput || !charCount) return;
+            
+            const count = messageInput.value.length;
+            charCount.textContent = `${count}/500`;
+            
+            if (count > 500) {
+                charCount.classList.add('text-red-500');
+            } else {
+                charCount.classList.remove('text-red-500');
+            }
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up navigation links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    showPage(pageId);
+                    
+                    // Close mobile menu if open
+                    const mobileMenu = document.getElementById('mobileMenu');
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+            
+            // Logo click returns to dashboard
+            document.getElementById('logo').addEventListener('click', function() {
+                showPage('dashboard');
+            });
+            
+            // Dashboard card clicks navigate to appropriate pages
+            document.querySelectorAll('#dashboard-page .card-hover[data-page]').forEach(card => {
+                card.addEventListener('click', function() {
+                    const pageId = this.getAttribute('data-page');
+                    showPage(pageId);
+                });
+            });
+            
+            // Group chat click events
+            document.querySelectorAll('[data-chat][data-type="group"]').forEach(el => {
+                el.addEventListener('click', function() {
+                    const chatId = this.getAttribute('data-chat');
+                    showChat(chatId, 'group');
+                });
+            });
+            
+            // Chat info button
+            document.getElementById('chatInfoBtn').addEventListener('click', function() {
+                document.getElementById('chatInfoPanel').classList.toggle('hidden');
+            });
+            
+            // Close chat info button
+            document.getElementById('closeChatInfoBtn').addEventListener('click', function() {
+                document.getElementById('chatInfoPanel').classList.add('hidden');
+            });
+            
+            // Send message button
+            document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+            
+            // Send message on Enter key (but not Shift+Enter)
+            document.getElementById('messageInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Update character count as user types
+            document.getElementById('messageInput').addEventListener('input', updateCharCount);
+            
+            // Attach file button
+            document.getElementById('attachFileBtn').addEventListener('click', function() {
+                alert("File upload dialog would open here. You could upload worksheets, notes, images, etc.");
+            });
+            
+            // Add link button
+            document.getElementById('addLinkBtn').addEventListener('click', function() {
+                const link = prompt("Enter a URL to share:");
+                if (link) {
+                    const newMessage = {
+                        id: Date.now(),
+                        sender: 'Ms. Rodriguez',
+                        senderId: 'teacher1',
+                        senderInitials: 'MR',
+                        type: 'link',
+                        content: 'Shared resource link',
+                        url: link,
+                        timestamp: new Date().toISOString(),
+                        isTeacher: true
+                    };
+                    
+                    if (!chatMessages[currentChatId]) {
+                        chatMessages[currentChatId] = [];
+                    }
+                    chatMessages[currentChatId].push(newMessage);
+                    renderChatMessages(currentChatId);
+                }
+            });
+            
+            // New announcement button
+            document.getElementById('newAnnouncement').addEventListener('click', function() {
+                const announcement = prompt("Enter your announcement:");
+                if (announcement) {
+                    const newMessage = {
+                        id: Date.now(),
+                        sender: 'Ms. Rodriguez',
+                        senderId: 'teacher1',
+                        senderInitials: 'MR',
+                        type: 'announcement',
+                        content: announcement,
+                        timestamp: new Date().toISOString(),
+                        isTeacher: true
+                    };
+                    
+                    if (!chatMessages[currentChatId]) {
+                        chatMessages[currentChatId] = [];
+                    }
+                    chatMessages[currentChatId].push(newMessage);
+                    renderChatMessages(currentChatId);
+                }
+            });
+            
+            // Mobile menu toggle
+            document.getElementById('menuToggle').addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobileMenu');
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Notifications button
+            document.getElementById('notificationsBtn').addEventListener('click', function() {
+                document.getElementById('notificationsModal').classList.remove('hidden');
+            });
+            
+            // Close notifications button
+            document.getElementById('closeNotificationsBtn').addEventListener('click', function() {
+                document.getElementById('notificationsModal').classList.add('hidden');
+            });
+            
+            // Close notifications modal when clicking outside
+            document.getElementById('notificationsModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                }
+            });
+            
+            // Button event handlers
+            document.getElementById('markAttendanceAll')?.addEventListener('click', function() {
+                // Mark all students as present
+                students.forEach(student => {
+                    student.present = true;
+                    student.late = false;
+                    student.earlyLeave = false;
+                });
+                
+                // Randomly mark 2 as late and 1 as absent for realism
+                students[2].late = true;
+                students[3].present = false;
+                
+                updateAttendanceStats();
+                renderAttendanceTable();
+                
+                alert("One-tap attendance completed! All students marked present with realistic variations.");
+            });
+            
+            document.getElementById('sendReport')?.addEventListener('click', function() {
+                const presentCount = students.filter(s => s.present).length;
+                alert(`Monthly attendance report sent to parents of all ${students.length} students!\n\nSummary: ${presentCount} students present today.`);
+            });
+            
+            document.getElementById('generateLessonPlan')?.addEventListener('click', function() {
+                alert("AI Lesson Plan generated! Check the 'Generated Lesson Plan' section for details.");
+            });
+            
+            document.getElementById('createAssignment')?.addEventListener('click', function() {
+                alert("Create Assignment form would open here. You can set details, due date, and enable AI grading.");
+            });
+            
+            document.getElementById('activateSubstitute')?.addEventListener('click', function() {
+                alert("Substitute Teacher Mode Activated!\n\nSubstitute now has access to lesson plans, materials, and attendance system.");
+            });
+            
+            document.getElementById('addStudent')?.addEventListener('click', function() {
+                alert("Add Student form would open here. You can enter student details, parent contacts, and initial assessment.");
+            });
+            
+            // Initialize pages
+            renderAttendanceTable();
+            updateAttendanceStats();
+            setupStudentTabs();
+            updateCharCount();
+            
+            // Show dashboard by default
+            showPage('dashboard');
+        });
+    </script>
+</body>
+</html>

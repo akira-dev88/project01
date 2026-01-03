@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Side App - AI Tutor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --secondary: #10B981;
+            --accent: #EC4899;
+            --warning: #F59E0B;
+            --info: #06B6D4;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 py-6 w-full overflow-hidden">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-2xl">
+                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Student Side App</h1>
+                    <p class="text-gray-600 text-sm">AI Tutor Assistant</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4 w-full sm:w-auto">
+                <div class="text-right hidden sm:block">
+                    <p class="font-medium text-gray-800">Alex Johnson</p>
+                    <p class="text-sm text-gray-600">Grade 10 • 94% Avg</p>
+                </div>
+                <div class="relative">
+                    <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                        AJ
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                        <i class="fas fa-check text-xs text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Side Navigation -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-5">
+                    <div class="mb-6 sm:mb-8">
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">My Progress</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Math</span>
+                                    <span class="font-bold text-purple-600">92%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div class="bg-purple-500 h-2 rounded-full" style="width: 92%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm text-gray-600">AI Queries</span>
+                                    <span class="font-bold text-cyan-600">42</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div class="bg-cyan-500 h-2 rounded-full" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation -->
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Menu</h3>
+                        <div class="space-y-2">
+                            <a href="students.html" class="nav-btn w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-home mr-3 text-lg"></i>
+                                    <span class="font-medium">Dashboard</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="ai-tutor.html" class="nav-btn w-full text-left p-3 rounded-xl bg-cyan-50 text-cyan-700 font-medium flex items-center justify-between border-2 border-cyan-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-robot mr-3 text-lg text-cyan-500"></i>
+                                    <span class="font-medium">AI Tutor</span>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                            
+                            <a href="wellness.html" class="nav-btn w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-heart mr-3 text-lg text-pink-500"></i>
+                                    <span class="font-medium">Wellness</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="catchup.html" class="nav-btn w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-book-medical mr-3 text-lg text-teal-500"></i>
+                                    <span class="font-medium">Catch-up</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="exams.html" class="nav-btn w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-alt mr-3 text-lg text-orange-500"></i>
+                                    <span class="font-medium">Exams</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Tips -->
+                    <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-100">
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">AI Tips</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center p-3 bg-cyan-50 rounded-lg">
+                                <div class="bg-cyan-500 text-white p-2 rounded-lg mr-3">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-sm">Be specific</p>
+                                    <p class="text-xs text-gray-600">Ask detailed questions</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+                                <div class="bg-blue-500 text-white p-2 rounded-lg mr-3">
+                                    <i class="fas fa-repeat"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-sm">Ask follow-ups</p>
+                                    <p class="text-xs text-gray-600">Clarify confusing parts</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6 overflow-hidden">
+                    <div class="mb-6 sm:mb-8">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-gray-800 flex items-center">
+                                    <i class="fas fa-robot text-cyan-500 mr-3"></i> AI Study Assistant
+                                </h2>
+                                <p class="text-gray-600 text-sm sm:text-base">Get personalized help with your studies</p>
+                            </div>
+                            <button class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-4 py-2 rounded-lg font-medium w-full sm:w-auto">
+                                <i class="fas fa-sync-alt mr-2"></i> New Plan
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Chat Interface -->
+                        <div class="lg:col-span-2">
+                            <div class="bg-gradient-to-br from-cyan-50 to-blue-50 p-4 sm:p-5 rounded-xl border border-cyan-200 mb-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white p-3 rounded-full mr-3 float">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-gray-800">Ask me anything! 🤔</h3>
+                                        <p class="text-sm text-gray-600">I'll explain it in simple terms</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <textarea id="ai-question" class="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-cyan-500" rows="3" placeholder="Try: 'Explain quadratic functions like I'm 10 years old...'"></textarea>
+                                </div>
+                                
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                    <div class="text-sm text-gray-500">
+                                        <i class="fas fa-lightbulb mr-1"></i> I'm here to help!
+                                    </div>
+                                    <button id="ask-ai-btn" class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-4 py-2 rounded-lg font-medium w-full sm:w-auto">
+                                        <i class="fas fa-paper-plane mr-2"></i> Ask
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- AI Response -->
+                            <div id="ai-response" class="bg-gray-50 rounded-xl p-4 sm:p-5">
+                                <div class="flex items-start mb-3">
+                                    <div class="bg-cyan-500 text-white p-2 rounded-full mr-3">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-gray-800 mb-2">Quadratic Functions Made Simple:</p>
+                                        <p class="text-gray-600 text-sm">"Think of a quadratic graph like a smiley face or frowny face. The number in front tells us if it's smiling (positive) or frowning (negative). The vertex is the tip of the smile/frown!"</p>
+                                    </div>
+                                </div>
+                                <button class="text-cyan-600 hover:text-cyan-700 text-sm font-medium">
+                                    <i class="fas fa-volume-up mr-1"></i> Listen to explanation
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Study Plan -->
+                        <div>
+                            <div class="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
+                                <h3 class="font-bold text-gray-800 mb-4">Your Study Plan</h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="p-3 bg-blue-50 rounded-lg">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="font-medium text-sm">Quadratic Functions</span>
+                                            <span class="text-blue-600 font-bold text-sm">High</span>
+                                        </div>
+                                        <p class="text-xs text-gray-600 mb-2">Focus on graphing</p>
+                                        <div class="flex items-center text-xs text-gray-500">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            <span>Today, 1.5 hours</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="p-3 bg-green-50 rounded-lg">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="font-medium text-sm">Polynomials</span>
+                                            <span class="text-green-600 font-bold text-sm">Medium</span>
+                                        </div>
+                                        <p class="text-xs text-gray-600 mb-2">Review division</p>
+                                        <div class="flex items-center text-xs text-gray-500">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            <span>Tomorrow, 1 hour</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="font-medium text-sm">Linear Equations</span>
+                                            <span class="text-gray-600 font-bold text-sm">Strong</span>
+                                        </div>
+                                        <p class="text-xs text-gray-600 mb-2">Quick review</p>
+                                        <div class="flex items-center text-xs text-gray-500">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            <span>Friday, 30 min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-lg font-medium">
+                                    <i class="fas fa-calendar-plus mr-2"></i> Add to Calendar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ask-ai-btn').addEventListener('click', function() {
+            const question = document.getElementById('ai-question').value;
+            if (question.trim()) {
+                const button = this;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Thinking...';
+                button.disabled = true;
+                
+                setTimeout(() => {
+                    const responseArea = document.getElementById('ai-response');
+                    responseArea.innerHTML = `
+                        <div class="flex items-start mb-3">
+                            <div class="bg-cyan-500 text-white p-2 rounded-full mr-3">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-800 mb-2">Great question! Here's my explanation:</p>
+                                <p class="text-gray-600 text-sm">"${question}" - Let me explain this in simple terms...</p>
+                                <p class="text-gray-600 text-sm mt-2">Think of it this way: Learning is like building with LEGO blocks. Start with the basics, then add more pieces as you understand better!</p>
+                            </div>
+                        </div>
+                        <button class="text-cyan-600 hover:text-cyan-700 text-sm font-medium">
+                            <i class="fas fa-volume-up mr-1"></i> Listen to explanation
+                        </button>
+                    `;
+                    
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    document.getElementById('ai-question').value = '';
+                    
+                    // Show success message
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                    successMsg.textContent = '✅ AI response ready!';
+                    document.body.appendChild(successMsg);
+                    
+                    setTimeout(() => successMsg.remove(), 3000);
+                }, 1500);
+            }
+        });
+    </script>
+</body>
+</html>

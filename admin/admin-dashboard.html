@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Side App - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --admin-primary: #1E40AF;
+            --admin-secondary: #0F766E;
+            --admin-accent: #7C3AED;
+            --admin-warning: #D97706;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-paid { background: linear-gradient(to right, #DCFCE7, #BBF7D0); }
+        .status-pending { background: linear-gradient(to right, #FEF3C7, #FDE68A); }
+        .status-overdue { background: linear-gradient(to right, #FEE2E2, #FECACA); }
+        
+        .incident-minor { border-left: 4px solid #FBBF24; }
+        .incident-moderate { border-left: 4px solid #F59E0B; }
+        .incident-major { border-left: 4px solid #DC2626; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .pulse { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-8xl mx-auto px-4 py-6 w-full overflow-hidden">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-blue-800 to-indigo-800 p-3 rounded-2xl">
+                    <i class="fas fa-school text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Admin Side App</h1>
+                    <p class="text-gray-600 text-sm">School Administration Portal</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4 w-full sm:w-auto">
+                <div class="text-right hidden sm:block">
+                    <p class="font-medium text-gray-800">Principal Williams</p>
+                    <p class="text-sm text-gray-600">Greenwood High School</p>
+                </div>
+                <div class="relative">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-800 to-indigo-800 rounded-full flex items-center justify-center text-white font-bold">
+                        PW
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                        <i class="fas fa-user-tie text-xs text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Side Navigation -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-5">
+                    <!-- School Stats -->
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">School Overview</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                <div>
+                                    <p class="text-sm text-gray-600">Students</p>
+                                    <p class="text-xl font-bold text-gray-800">1,248</p>
+                                </div>
+                                <i class="fas fa-user-graduate text-blue-600 text-xl"></i>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <div>
+                                    <p class="text-sm text-gray-600">Teachers</p>
+                                    <p class="text-xl font-bold text-gray-800">78</p>
+                                </div>
+                                <i class="fas fa-chalkboard-teacher text-green-600 text-xl"></i>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                                <div>
+                                    <p class="text-sm text-gray-600">Classes</p>
+                                    <p class="text-xl font-bold text-gray-800">42</p>
+                                </div>
+                                <i class="fas fa-door-closed text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation -->
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Admin Menu</h3>
+                        <div class="space-y-2">
+                            <a href="admin-dashboard.html" class="w-full text-left p-3 rounded-xl bg-blue-50 text-blue-700 font-medium flex items-center justify-between border-2 border-blue-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-tachometer-alt mr-3 text-lg"></i>
+                                    <span class="font-medium">Dashboard</span>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                            
+                            <a href="fee-tracking.html" class="w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-credit-card mr-3 text-lg text-green-600"></i>
+                                    <span class="font-medium">Fee Tracking</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="discipline-tracker.html" class="w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-clipboard-list mr-3 text-lg text-orange-600"></i>
+                                    <span class="font-medium">Discipline Tracker</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="compliance-reports.html" class="w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-file-contract mr-3 text-lg text-purple-600"></i>
+                                    <span class="font-medium">Compliance Reports</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-100">
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="w-full text-left p-3 bg-green-50 rounded-lg hover:bg-green-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-plus-circle text-green-600 mr-3"></i>
+                                    <div>
+                                        <p class="font-medium text-sm">New Report</p>
+                                        <p class="text-xs text-gray-600">Generate compliance report</p>
+                                    </div>
+                                </div>
+                            </button>
+                            
+                            <button class="w-full text-left p-3 bg-blue-50 rounded-lg hover:bg-blue-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-bell text-blue-600 mr-3"></i>
+                                    <div>
+                                        <p class="font-medium text-sm">Send Alerts</p>
+                                        <p class="text-xs text-gray-600">Fee reminders</p>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="lg:col-span-3">
+                <!-- Admin Overview -->
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800">School Administration Dashboard</h2>
+                        <div class="flex items-center space-x-2 mt-2 sm:mt-0">
+                            <span class="text-sm text-gray-600">Status:</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium">
+                                <i class="fas fa-check-circle mr-1"></i> All Systems Operational
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Key Metrics -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100 card-hover">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-green-500 text-white p-3 rounded-xl mr-4">
+                                    <i class="fas fa-money-check-alt"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600">Fee Collection</p>
+                                    <p class="text-2xl font-bold text-gray-800">94%</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600">₹18.7L / ₹20L collected</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl border border-blue-100 card-hover">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-blue-500 text-white p-3 rounded-xl mr-4">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600">Attendance</p>
+                                    <p class="text-2xl font-bold text-gray-800">96%</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600">Overall school average</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-xl border border-orange-100 card-hover">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-orange-500 text-white p-3 rounded-xl mr-4">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600">Incidents This Month</p>
+                                    <p class="text-2xl font-bold text-gray-800">12</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600">-3 from last month</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-100 card-hover">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-purple-500 text-white p-3 rounded-xl mr-4">
+                                    <i class="fas fa-file-certificate"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600">Compliance</p>
+                                    <p class="text-2xl font-bold text-gray-800">100%</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600">All reports up-to-date</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Fee Status -->
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Fee Collection Status</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 status-paid rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                                        <div>
+                                            <p class="font-medium">Grade 10 - Paid</p>
+                                            <p class="text-xs text-gray-600">98% collection rate</p>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold text-green-600">₹4.9L</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 status-pending rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-clock text-yellow-600 mr-3"></i>
+                                        <div>
+                                            <p class="font-medium">Grade 9 - Pending</p>
+                                            <p class="text-xs text-gray-600">Due in 5 days</p>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold text-yellow-600">₹4.2L</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 status-overdue rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-exclamation-circle text-red-600 mr-3"></i>
+                                        <div>
+                                            <p class="font-medium">Grade 8 - Overdue</p>
+                                            <p class="text-xs text-gray-600">15 days overdue</p>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold text-red-600">₹0.8L</span>
+                                </div>
+                            </div>
+                            
+                            <a href="fee-tracking.html" class="inline-block mt-4 text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i> View Detailed Fee Report
+                            </a>
+                        </div>
+                        
+                        <!-- Recent Incidents -->
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Recent Incidents</h3>
+                            <div class="space-y-3">
+                                <div class="p-3 incident-major bg-gray-50 rounded-lg">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p class="font-medium">Major: Physical Altercation</p>
+                                            <p class="text-xs text-gray-600">Grade 11 • Oct 20</p>
+                                        </div>
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Resolved</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700">Two students involved. Parents notified.</p>
+                                </div>
+                                
+                                <div class="p-3 incident-minor bg-gray-50 rounded-lg">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p class="font-medium">Minor: Late Submission</p>
+                                            <p class="text-xs text-gray-600">Grade 9 • Oct 19</p>
+                                        </div>
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Monitoring</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700">Repeated late homework submissions</p>
+                                </div>
+                            </div>
+                            
+                            <a href="discipline-tracker.html" class="inline-block mt-4 text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i> View Discipline Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Reports -->
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Quick Report Generation</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <a href="compliance-reports.html" class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200 hover:border-blue-300 card-hover">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="bg-blue-500 text-white p-3 rounded-full mb-3">
+                                    <i class="fas fa-user-clock"></i>
+                                </div>
+                                <p class="font-medium text-gray-800">Attendance Report</p>
+                                <p class="text-xs text-gray-600 mt-1">Monthly summary</p>
+                            </div>
+                        </a>
+                        
+                        <a href="compliance-reports.html" class="bg-gradient-to-r from-green-50 to-teal-50 p-4 rounded-xl border border-green-200 hover:border-green-300 card-hover">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="bg-green-500 text-white p-3 rounded-full mb-3">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <p class="font-medium text-gray-800">Teacher Workload</p>
+                                <p class="text-xs text-gray-600 mt-1">Period distribution</p>
+                            </div>
+                        </a>
+                        
+                        <a href="compliance-reports.html" class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200 hover:border-purple-300 card-hover">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="bg-purple-500 text-white p-3 rounded-full mb-3">
+                                    <i class="fas fa-landmark"></i>
+                                </div>
+                                <p class="font-medium text-gray-800">Govt. Compliance</p>
+                                <p class="text-xs text-gray-600 mt-1">Required formats</p>
+                            </div>
+                        </a>
+                        
+                        <a href="fee-tracking.html" class="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-xl border border-orange-200 hover:border-orange-300 card-hover">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="bg-orange-500 text-white p-3 rounded-full mb-3">
+                                    <i class="fas fa-rupee-sign"></i>
+                                </div>
+                                <p class="font-medium text-gray-800">Financial Report</p>
+                                <p class="text-xs text-gray-600 mt-1">Fee collection</p>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <div class="flex items-start">
+                            <i class="fas fa-lightbulb text-blue-600 mr-3 mt-1"></i>
+                            <div>
+                                <p class="font-medium text-blue-800">Automated Reporting</p>
+                                <p class="text-sm text-blue-700">All reports are automatically generated and formatted for government compliance. Click any report type to generate instantly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

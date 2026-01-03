@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Side App - Compliance Reports</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --admin-primary: #1E40AF;
+            --admin-secondary: #0F766E;
+            --admin-accent: #7C3AED;
+            --admin-warning: #D97706;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .report-ready { 
+            background: linear-gradient(to right, #DCFCE7, #BBF7D0);
+            border-left: 4px solid #10B981;
+        }
+        .report-pending { 
+            background: linear-gradient(to right, #FEF3C7, #FDE68A);
+            border-left: 4px solid #F59E0B;
+        }
+        .report-overdue { 
+            background: linear-gradient(to right, #FEE2E2, #FECACA);
+            border-left: 4px solid #EF4444;
+        }
+        
+        .govt-format { border: 2px solid #1E40AF; }
+        .auto-generated { border: 2px dashed #7C3AED; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .pulse { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-8xl mx-auto px-4 py-6 w-full overflow-hidden">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-blue-800 to-indigo-800 p-3 rounded-2xl">
+                    <i class="fas fa-school text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Admin Side App</h1>
+                    <p class="text-gray-600 text-sm">Compliance & Reports System</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4 w-full sm:w-auto">
+                <div class="text-right hidden sm:block">
+                    <p class="font-medium text-gray-800">Principal Williams</p>
+                    <p class="text-sm text-gray-600">Compliance Officer</p>
+                </div>
+                <div class="relative">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-800 to-indigo-800 rounded-full flex items-center justify-center text-white font-bold">
+                        PW
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Side Navigation -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-5">
+                    <!-- Compliance Status -->
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Compliance Status</h3>
+                        <div class="space-y-4">
+                            <div class="p-3 bg-green-50 rounded-lg">
+                                <p class="text-sm text-gray-600">Reports Due</p>
+                                <p class="text-xl font-bold text-gray-800">2</p>
+                                <p class="text-xs text-green-600">Next due: Nov 5</p>
+                            </div>
+                            
+                            <div class="p-3 bg-blue-50 rounded-lg">
+                                <p class="text-sm text-gray-600">Auto-generated</p>
+                                <p class="text-xl font-bold text-gray-800">24</p>
+                                <p class="text-xs text-blue-600">This month</p>
+                            </div>
+                            
+                            <div class="p-3 bg-purple-50 rounded-lg">
+                                <p class="text-sm text-gray-600">Govt. Formats</p>
+                                <p class="text-xl font-bold text-gray-800">12</p>
+                                <p class="text-xs text-purple-600">Pre-configured</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation -->
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Admin Menu</h3>
+                        <div class="space-y-2">
+                            <a href="admin-dashboard.html" class="w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-tachometer-alt mr-3 text-lg"></i>
+                                    <span class="font-medium">Dashboard</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="fee-tracking.html" class="w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-credit-card mr-3 text-lg text-green-600"></i>
+                                    <span class="font-medium">Fee Tracking</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="discipline-tracker.html" class="w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-clipboard-list mr-3 text-lg text-orange-600"></i>
+                                    <span class="font-medium">Discipline Tracker</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="compliance-reports.html" class="w-full text-left p-3 rounded-xl bg-purple-50 text-purple-700 font-medium flex items-center justify-between border-2 border-purple-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-file-contract mr-3 text-lg text-purple-600"></i>
+                                    <span class="font-medium">Compliance Reports</span>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Reports -->
+                    <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-100">
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Quick Reports</h3>
+                        <div class="space-y-3">
+                            <button class="w-full text-left p-3 bg-blue-50 rounded-lg hover:bg-blue-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user-clock text-blue-600 mr-3"></i>
+                                    <div>
+                                        <p class="font-medium text-sm">Attendance Summary</p>
+                                        <p class="text-xs text-gray-600">Monthly report</p>
+                                    </div>
+                                </div>
+                            </button>
+                            
+                            <button class="w-full text-left p-3 bg-green-50 rounded-lg hover:bg-green-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-chalkboard-teacher text-green-600 mr-3"></i>
+                                    <div>
+                                        <p class="font-medium text-sm">Teacher Workload</p>
+                                        <p class="text-xs text-gray-600">Period distribution</p>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="lg:col-span-3">
+                <!-- Auto-Generated Reports -->
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800">Auto-Generated Reports</h2>
+                        <div class="flex items-center space-x-2 mt-2 sm:mt-0">
+                            <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium">
+                                <i class="fas fa-robot mr-1"></i> 100% Automated
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="auto-generated bg-gradient-to-br from-purple-50 to-indigo-50 p-5 rounded-xl mb-8">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-purple-600 text-white p-3 rounded-full mr-3">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800">One-Click Report Generation</h3>
+                                <p class="text-sm text-gray-600">No manual data entry required</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white p-4 rounded-lg text-center">
+                                <div class="bg-blue-100 text-blue-600 p-3 rounded-full inline-block mb-2">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <p class="font-medium">Daily</p>
+                                <p class="text-xs text-gray-600">Attendance logs</p>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-lg text-center">
+                                <div class="bg-green-100 text-green-600 p-3 rounded-full inline-block mb-2">
+                                    <i class="fas fa-calendar-week"></i>
+                                </div>
+                                <p class="font-medium">Weekly</p>
+                                <p class="text-xs text-gray-600">Progress reports</p>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-lg text-center">
+                                <div class="bg-orange-100 text-orange-600 p-3 rounded-full inline-block mb-2">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <p class="font-medium">Monthly</p>
+                                <p class="text-xs text-gray-600">Compliance reports</p>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-lg text-center">
+                                <div class="bg-red-100 text-red-600 p-3 rounded-full inline-block mb-2">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <p class="font-medium">Quarterly</p>
+                                <p class="text-xs text-gray-600">Govt. submissions</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Report Types -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <!-- Attendance Summaries -->
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Attendance Summaries</h3>
+                            <div class="space-y-3">
+                                <div class="report-ready p-4 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium">October 2023 Summary</p>
+                                                <p class="text-xs text-gray-600">Overall: 96.2% attendance</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-xs text-gray-600">Generated: Oct 31</p>
+                                            <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                                <i class="fas fa-download mr-1"></i> PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="report-ready p-4 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium">Q3 2023 Attendance Report</p>
+                                                <p class="text-xs text-gray-600">July-September analysis</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-xs text-gray-600">Generated: Oct 1</p>
+                                            <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                                <i class="fas fa-download mr-1"></i> Excel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="report-pending p-4 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-clock text-yellow-600 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium">November 2023 Summary</p>
+                                                <p class="text-xs text-gray-600">Auto-generates Nov 30</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-xs text-gray-600">Due: Nov 30</p>
+                                            <span class="text-yellow-600 text-sm font-medium">Scheduled</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Teacher Workload Reports -->
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Teacher Workload Reports</h3>
+                            <div class="space-y-3">
+                                <div class="report-ready p-4 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium">Period Distribution Q3</p>
+                                                <p class="text-xs text-gray-600">Teacher workload analysis</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-xs text-gray-600">Generated: Oct 15</p>
+                                            <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                                <i class="fas fa-download mr-1"></i> PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="report-ready p-4 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium">Subject Allocation Report</p>
+                                                <p class="text-xs text-gray-600">2023-24 academic year</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-xs text-gray-600">Generated: Sep 30</p>
+                                            <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                                <i class="fas fa-download mr-1"></i> Excel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="report-overdue p-4 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-exclamation-circle text-red-600 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium">Workload Balance Audit</p>
+                                                <p class="text-xs text-gray-600">Overdue by 5 days</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-xs text-gray-600">Due: Oct 15</p>
+                                            <button class="text-red-600 hover:text-red-700 text-sm font-medium pulse">
+                                                <i class="fas fa-play mr-1"></i> Generate Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Government-Required Formats -->
+                    <div class="govt-format bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-xl">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-600 text-white p-3 rounded-full mr-3">
+                                <i class="fas fa-landmark"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800">Government-Required Formats</h3>
+                                <p class="text-sm text-gray-600">Pre-configured templates</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-file-contract text-blue-600 mr-2"></i>
+                                    <span class="font-medium">UDISE+ Report</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Unified District Information System</p>
+                                <p class="text-xs text-blue-600 mt-1">Annual submission • Format: XML</p>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-file-invoice text-green-600 mr-2"></i>
+                                    <span class="font-medium">CBSE Affiliation</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Annual compliance report</p>
+                                <p class="text-xs text-green-600 mt-1">Due: Dec 31 • Format: PDF</p>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-file-medical text-red-600 mr-2"></i>
+                                    <span class="font-medium">Health & Safety Audit</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Quarterly safety compliance</p>
+                                <p class="text-xs text-red-600 mt-1">Due: Nov 5 • Format: Excel</p>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-file-signature text-purple-600 mr-2"></i>
+                                    <span class="font-medium">RTE Compliance</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Right to Education Act</p>
+                                <p class="text-xs text-purple-600 mt-1">Annual • Format: Government portal</p>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg font-medium">
+                            <i class="fas fa-file-export mr-2"></i> Generate All Government Reports
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Audit & Inspection Ready -->
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-gray-800">Audit & Inspection Ready Reports</h3>
+                        <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium">
+                            <i class="fas fa-shield-alt mr-1"></i> All Reports Up-to-Date
+                        </span>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Report Name</th>
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Frequency</th>
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Last Generated</th>
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Status</th>
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Next Due</th>
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="p-3 font-medium">Financial Audit Report</td>
+                                    <td class="p-3">Quarterly</td>
+                                    <td class="p-3">Oct 1, 2023</td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded font-medium">
+                                            Complete
+                                        </span>
+                                    </td>
+                                    <td class="p-3">Jan 1, 2024</td>
+                                    <td class="p-3">
+                                        <button class="text-blue-600 hover:text-blue-700 text-sm font-medium mr-3">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="text-green-600 hover:text-green-700 text-sm font-medium">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="p-3 font-medium">Staff Attendance Register</td>
+                                    <td class="p-3">Monthly</td>
+                                    <td class="p-3">Oct 31, 2023</td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded font-medium">
+                                            Complete
+                                        </span>
+                                    </td>
+                                    <td class="p-3">Nov 30, 2023</td>
+                                    <td class="p-3">
+                                        <button class="text-blue-600 hover:text-blue-700 text-sm font-medium mr-3">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="text-green-600 hover:text-green-700 text-sm font-medium">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="p-3 font-medium">Student Health Records</td>
+                                    <td class="p-3">Annual</td>
+                                    <td class="p-3">Sep 15, 2023</td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded font-medium">
+                                            Complete
+                                        </span>
+                                    </td>
+                                    <td class="p-3">Sep 15, 2024</td>
+                                    <td class="p-3">
+                                        <button class="text-blue-600 hover:text-blue-700 text-sm font-medium mr-3">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="text-green-600 hover:text-green-700 text-sm font-medium">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="p-3 font-medium">Infrastructure Safety</td>
+                                    <td class="p-3">Semi-Annual</td>
+                                    <td class="p-3">Jul 1, 2023</td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded font-medium">
+                                            Due Soon
+                                        </span>
+                                    </td>
+                                    <td class="p-3">Jan 1, 2024</td>
+                                    <td class="p-3">
+                                        <button class="text-blue-600 hover:text-blue-700 text-sm font-medium mr-3">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="text-green-600 hover:text-green-700 text-sm font-medium">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-green-50 rounded-lg">
+                        <div class="flex items-start">
+                            <i class="fas fa-clipboard-check text-green-600 mr-3 mt-1"></i>
+                            <div>
+                                <p class="font-medium text-green-800">Audit-Ready at All Times</p>
+                                <p class="text-sm text-green-700">All reports are automatically generated, formatted, and stored. School inspections can happen at any time - you're always prepared with up-to-date documentation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

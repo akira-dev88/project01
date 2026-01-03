@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parents Side App - Smart Alerts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --secondary: #10B981;
+            --accent: #EC4899;
+            --warning: #F59E0B;
+            --info: #06B6D4;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .priority-critical { 
+            border-left: 4px solid #EF4444;
+            background: linear-gradient(to right, #FEF2F2, white);
+        }
+        .priority-academic { 
+            border-left: 4px solid #3B82F6;
+            background: linear-gradient(to right, #EFF6FF, white);
+        }
+        .priority-general { 
+            border-left: 4px solid #6B7280;
+            background: linear-gradient(to right, #F9FAFB, white);
+        }
+        
+        .alert-icon-critical { background-color: #EF4444; }
+        .alert-icon-academic { background-color: #3B82F6; }
+        .alert-icon-general { background-color: #6B7280; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .pulse { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 py-6 w-full overflow-hidden">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-2xl">
+                    <i class="fas fa-users text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Parents Side App</h1>
+                    <p class="text-gray-600 text-sm">Smart Alerts Center</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4 w-full sm:w-auto">
+                <div class="relative">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
+                        SJ
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                        <i class="fas fa-check text-xs text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Side Navigation -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-5">
+                    <!-- Alert Summary -->
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Alert Summary</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="bg-red-500 text-white p-2 rounded-lg mr-3">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-sm">Critical</p>
+                                        <p class="text-xs text-gray-600">Requires attention</p>
+                                    </div>
+                                </div>
+                                <span class="bg-white text-red-600 font-bold px-2 py-1 rounded-full text-sm">1</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="bg-blue-500 text-white p-2 rounded-lg mr-3">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-sm">Academic</p>
+                                        <p class="text-xs text-gray-600">Updates & progress</p>
+                                    </div>
+                                </div>
+                                <span class="bg-white text-blue-600 font-bold px-2 py-1 rounded-full text-sm">4</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="bg-gray-500 text-white p-2 rounded-lg mr-3">
+                                        <i class="fas fa-info-circle"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-sm">General</p>
+                                        <p class="text-xs text-gray-600">Announcements</p>
+                                    </div>
+                                </div>
+                                <span class="bg-white text-gray-600 font-bold px-2 py-1 rounded-full text-sm">3</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation -->
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Menu</h3>
+                        <div class="space-y-2">
+                            <a href="parent-dashboard.html" class="w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-chart-line mr-3 text-lg"></i>
+                                    <span class="font-medium">Dashboard</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                            
+                            <a href="parent-alerts.html" class="w-full text-left p-3 rounded-xl bg-orange-50 text-orange-700 font-medium flex items-center justify-between border-2 border-orange-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-bell mr-3 text-lg text-orange-500"></i>
+                                    <span class="font-medium">Smart Alerts</span>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                            
+                            <a href="parent-communication.html" class="w-full text-left p-3 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between border border-gray-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-shield-alt mr-3 text-lg text-green-500"></i>
+                                    <span class="font-medium">Safe Communication</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Alert Settings -->
+                    <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-100">
+                        <h3 class="font-bold text-gray-800 mb-4 text-lg">Alert Settings</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">Push Notifications</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">Email Alerts</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">SMS for Critical</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg font-medium text-sm">
+                            <i class="fas fa-save mr-2"></i> Save Preferences
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="lg:col-span-3">
+                <!-- Priority Alerts -->
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800">Priority-Based Alerts</h2>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-600">Filter:</span>
+                            <select class="border border-gray-300 rounded-lg px-3 py-1 text-sm">
+                                <option>All Alerts</option>
+                                <option>Critical Only</option>
+                                <option>Academic Only</option>
+                                <option>General Only</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Critical Alert -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <span class="text-red-600 mr-2">🚨 Critical Alerts</span>
+                            <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Requires Immediate Attention</span>
+                        </h3>
+                        
+                        <div class="priority-critical p-4 rounded-lg mb-4">
+                            <div class="flex items-start">
+                                <div class="alert-icon-critical text-white p-3 rounded-full mr-4">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p class="font-bold text-gray-800">Unexcused Absence</p>
+                                            <p class="text-sm text-gray-600">Alex was marked absent for 2nd period</p>
+                                        </div>
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded font-medium pulse">
+                                            URGENT
+                                        </span>
+                                    </div>
+                                    <p class="text-gray-700 mb-3">Please confirm if this absence was excused or contact the school office.</p>
+                                    <div class="flex space-x-3">
+                                        <button class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700">
+                                            <i class="fas fa-phone mr-2"></i> Call School
+                                        </button>
+                                        <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300">
+                                            <i class="fas fa-check mr-2"></i> Mark as Excused
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Academic Alerts -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <span class="text-blue-600 mr-2">📘 Academic Alerts</span>
+                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Updates & Progress</span>
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <div class="priority-academic p-4 rounded-lg">
+                                <div class="flex items-start">
+                                    <div class="alert-icon-academic text-white p-3 rounded-full mr-4">
+                                        <i class="fas fa-exam"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div>
+                                                <p class="font-bold text-gray-800">Upcoming Midterm Exam</p>
+                                                <p class="text-sm text-gray-600">Math Midterm - Oct 30</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded font-medium">
+                                                14 days left
+                                            </span>
+                                        </div>
+                                        <p class="text-gray-700">Study materials and practice tests are available in the student portal.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="priority-academic p-4 rounded-lg">
+                                <div class="flex items-start">
+                                    <div class="alert-icon-academic text-white p-3 rounded-full mr-4">
+                                        <i class="fas fa-trophy"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div>
+                                                <p class="font-bold text-gray-800">Academic Achievement</p>
+                                                <p class="text-sm text-gray-600">Math Quiz - 96% Score</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded font-medium">
+                                                EXCELLENT
+                                            </span>
+                                        </div>
+                                        <p class="text-gray-700">Alex scored in the top 10% of the class. Great work!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- General Alerts -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <span class="text-gray-600 mr-2">📢 General Alerts</span>
+                            <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Announcements & Reminders</span>
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <div class="priority-general p-4 rounded-lg">
+                                <div class="flex items-start">
+                                    <div class="alert-icon-general text-white p-3 rounded-full mr-4">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div>
+                                                <p class="font-bold text-gray-800">Parent-Teacher Conference</p>
+                                                <p class="text-sm text-gray-600">Scheduled for Nov 15</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded font-medium">
+                                                REMINDER
+                                            </span>
+                                        </div>
+                                        <p class="text-gray-700">Please confirm your availability for the 3:00 PM slot.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="priority-general p-4 rounded-lg">
+                                <div class="flex items-start">
+                                    <div class="alert-icon-general text-white p-3 rounded-full mr-4">
+                                        <i class="fas fa-school"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div>
+                                                <p class="font-bold text-gray-800">School Event</p>
+                                                <p class="text-sm text-gray-600">Science Fair - Nov 10</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded font-medium">
+                                                EVENT
+                                            </span>
+                                        </div>
+                                        <p class="text-gray-700">Families are invited to attend the annual Science Fair.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alert Preferences -->
+                <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6">Parent-Controlled Alert Preferences</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Notification Channels -->
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-4">Notification Channels</h4>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-mobile-alt text-blue-600 mr-3"></i>
+                                        <div>
+                                            <p class="font-medium text-sm">Push Notifications</p>
+                                            <p class="text-xs text-gray-600">Instant alerts on phone</p>
+                                        </div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-envelope text-red-600 mr-3"></i>
+                                        <div>
+                                            <p class="font-medium text-sm">Email Digest</p>
+                                            <p class="text-xs text-gray-600">Daily/weekly summary</p>
+                                        </div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-sms text-green-600 mr-3"></i>
+                                        <div>
+                                            <p class="font-medium text-sm">SMS Alerts</p>
+                                            <p class="text-xs text-gray-600">Critical alerts only</p>
+                                        </div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Alert Types -->
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-4">Alert Types</h4>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-exclamation-circle text-red-600 mr-3"></i>
+                                        <div>
+                                            <p class="font-medium text-sm">Critical Alerts</p>
+                                            <p class="text-xs text-gray-600">Absences, emergencies</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-red-600 font-bold">Always On</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-graduation-cap text-blue-600 mr-3"></i>
+                                        <div>
+                                            <p class="font-medium text-sm">Academic Updates</p>
+                                            <p class="text-xs text-gray-600">Grades, assignments</p>
+                                        </div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-bullhorn text-gray-600 mr-3"></i>
+                                        <div>
+                                            <p class="font-medium text-sm">General Announcements</p>
+                                            <p class="text-xs text-gray-600">Events, reminders</p>
+                                        </div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <div class="flex items-start">
+                            <i class="fas fa-info-circle text-blue-600 mr-3 mt-1"></i>
+                            <div>
+                                <p class="font-medium text-blue-800">Smart Notification System</p>
+                                <p class="text-sm text-blue-700">Critical alerts are always sent. You can customize academic and general alerts based on your preferences. Changes are applied immediately.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
